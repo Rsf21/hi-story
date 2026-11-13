@@ -1,13 +1,7 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
 
 dotenv.config();
-
-const caPath = path.resolve(process.env.DB_SSL_CA);
-
-console.log("CA certificate ditemukan:", fs.existsSync(caPath));
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -17,8 +11,7 @@ const pool = mysql.createPool({
   port: Number(process.env.DB_PORT),
 
   ssl: {
-    ca: fs.readFileSync(caPath),
-    rejectUnauthorized: true,
+    minVersion: "TLSv1.2",
   },
 
   waitForConnections: true,
