@@ -1,0 +1,33 @@
+<%- include('../partials/admin-header') %>
+
+<h1>Kelola Cerita</h1>
+<p><a href="<%= adminPath %>/stories/create" class="btn">+ Tambah Cerita</a></p>
+
+<table>
+  <thead>
+    <tr><th>Gambar</th><th>Judul</th><th>Kategori</th><th>Lokasi</th><th>Tanggal</th><th>Aksi</th></tr>
+  </thead>
+  <tbody>
+    <% if (stories.length === 0) { %>
+      <tr><td colspan="6">Belum ada cerita.</td></tr>
+    <% } %>
+    <% stories.forEach(s => { %>
+      <tr>
+        <td><% if (s.image) { %><img src="/uploads/<%= s.image %>" alt=""><% } %></td>
+        <td><a href="/story/<%= s.slug %>" target="_blank"><%= s.title %></a></td>
+        <td><%= s.category_name %></td>
+        <td><%= s.location_name || '-' %></td>
+        <td><%= new Date(s.published_at).toLocaleDateString('id-ID') %></td>
+        <td>
+          <a href="<%= adminPath %>/stories/<%= s.id %>/edit" class="btn">Edit</a>
+          <form action="<%= adminPath %>/stories/<%= s.id %>/delete" method="POST" class="inline"
+                onsubmit="return confirm('Hapus cerita ini?')">
+            <button type="submit" class="btn btn-danger">Hapus</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include('../partials/admin-footer') %>

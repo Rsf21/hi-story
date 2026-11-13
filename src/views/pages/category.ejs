@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main>
+  <h1><%= category.name %></h1>
+
+  <% if (stories.length === 0) { %>
+    <p>Belum ada cerita di kategori ini.</p>
+  <% } %>
+
+  <div class="grid grid-compact">
+    <% stories.forEach(story => { %>
+      <a href="/story/<%= story.slug %>" class="card">
+        <% if (story.image) { %>
+          <img src="/uploads/<%= story.image %>" alt="<%= story.title %>" loading="lazy">
+        <% } else { %>
+          <div class="card-noimg"><%= story.title.charAt(0).toUpperCase() %></div>
+        <% } %>
+        <div class="card-body">
+          <span class="tag"><%= story.category_name %></span>
+          <h2><%= story.title %></h2>
+          <p><%= story.summary %></p>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+
+  <%- include('../partials/pagination') %>
+</main>
+
+<%- include('../partials/footer') %>

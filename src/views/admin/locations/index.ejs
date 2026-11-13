@@ -1,0 +1,51 @@
+<%- include('../partials/admin-header') %>
+
+<h1>Kelola Lokasi</h1>
+
+<form action="<%= adminPath %>/locations" method="POST" class="form" style="margin-bottom:1.5rem">
+  <% if (error) { %><p class="error"><%= error %></p><% } %>
+
+  <label>Nama wilayah</label>
+  <input type="text" name="name" value="<%= form.name || '' %>" placeholder="Misal: Makedonia Kuno (Pella)" required>
+
+  <label>Lintang (latitude)</label>
+  <input type="text" name="lat" value="<%= form.lat || '' %>" placeholder="40.7611" required>
+
+  <label>Bujur (longitude)</label>
+  <input type="text" name="lng" value="<%= form.lng || '' %>" placeholder="22.5236" required>
+
+  <label>Radius klik (km)</label>
+  <input type="text" name="radius_km" value="<%= form.radius_km || 500 %>">
+  <small>Area di sekitar titik yang ikut terhitung saat pengunjung mengklik bumi.</small>
+
+  <small>Cara dapat koordinat: buka Google Maps, klik kanan di lokasi, klik angka koordinat paling atas (otomatis tersalin).</small>
+
+  <p><button type="submit" class="btn">+ Tambah Lokasi</button></p>
+</form>
+
+<table>
+  <thead>
+    <tr><th>Nama</th><th>Lintang</th><th>Bujur</th><th>Radius</th><th>Aksi</th></tr>
+  </thead>
+  <tbody>
+    <% if (locations.length === 0) { %>
+      <tr><td colspan="5">Belum ada lokasi.</td></tr>
+    <% } %>
+    <% locations.forEach(l => { %>
+      <tr>
+        <td><%= l.name %></td>
+        <td><%= l.lat %></td>
+        <td><%= l.lng %></td>
+        <td><%= l.radius_km %> km</td>
+        <td>
+          <form action="<%= adminPath %>/locations/<%= l.id %>/delete" method="POST" class="inline"
+                onsubmit="return confirm('Hapus lokasi ini? Cerita yang memakainya jadi tanpa lokasi.')">
+            <button type="submit" class="btn btn-danger">Hapus</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include('../partials/admin-footer') %>

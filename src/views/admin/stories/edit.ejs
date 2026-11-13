@@ -1,0 +1,51 @@
+<%- include('../partials/admin-header') %>
+
+<h1>Edit Cerita</h1>
+
+<form action="<%= adminPath %>/stories/<%= story.id %>" method="POST" enctype="multipart/form-data" class="form">
+  <% if (error) { %><p class="error"><%= error %></p><% } %>
+
+  <label>Judul</label>
+  <input type="text" name="title" value="<%= story.title || '' %>" required>
+
+  <label>Kategori</label>
+  <select name="category_id" required>
+    <% categories.forEach(c => { %>
+      <option value="<%= c.id %>" <%= String(story.category_id) === String(c.id) ? 'selected' : '' %>><%= c.name %></option>
+    <% }) %>
+  </select>
+
+  <label>Lokasi di Bumi 3D (opsional)</label>
+  <select name="location_id">
+    <option value="">-- Tanpa lokasi --</option>
+    <% locations.forEach(l => { %>
+      <option value="<%= l.id %>" <%= String(story.location_id) === String(l.id) ? 'selected' : '' %>><%= l.name %></option>
+    <% }) %>
+  </select>
+  <small>Pilih wilayah supaya cerita ini muncul saat pengunjung mengklik wilayah itu di Jelajah Bumi. Lokasi baru ditambah lewat menu Kelola Lokasi.</small>
+  <label>Rentang tahun cerita (opsional)</label>
+<div class="year-row">
+  <input type="number" name="year_start" value="<%= story.year_start ?? '' %>" placeholder="Mulai, mis. -356">
+  <input type="number" name="year_end" value="<%= story.year_end ?? '' %>" placeholder="Akhir, mis. -323">
+</div>
+<small>Isi tahun Masehi. Untuk SM pakai tanda minus (356 SM = -356). Kalau hanya satu tahun, isi kolom pertama saja. Dipakai oleh filter tahun di Jelajah Bumi.</small>
+  <label>Ringkasan</label>
+  <textarea name="summary" style="min-height:80px"><%= story.summary || '' %></textarea>
+
+  <label>Gambar</label>
+  <% if (story.image) { %>
+    <p><img src="/uploads/<%= story.image %>" alt="" width="200"></p>
+    <small>Biarkan kosong kalau ga mau ganti gambar.</small>
+  <% } %>
+  <input type="file" name="image" accept="image/*">
+
+  <label>Isi cerita</label>
+  <%- include('../partials/editor', { content: story.content || '' }) %>
+
+  <%- include('../partials/related-picker') %>
+
+  <p><button type="submit" class="btn">Update</button>
+     <a href="<%= adminPath %>/stories">Batal</a></p>
+</form>
+
+<%- include('../partials/admin-footer') %>

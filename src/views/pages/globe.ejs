@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<section class="globe-page">
+  <div class="globe-stage" id="globe" aria-label="Bumi 3D interaktif">
+    <p class="globe-error" id="globe-loading">Memuat bumi 3D...</p>
+  </div>
+
+  <div class="globe-toolbar">
+    <div class="globe-row">
+      <div class="globe-search" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="gs-input" placeholder="Cari tokoh, cerita, atau wilayah..."
+               autocomplete="off" spellcheck="false"
+               role="combobox" aria-expanded="false" aria-controls="gs-results" aria-autocomplete="list">
+        <button type="button" id="gs-clear" aria-label="Hapus pencarian" hidden>&times;</button>
+        <ul class="gs-results" id="gs-results" role="listbox" hidden></ul>
+      </div>
+
+      <details class="globe-filter" id="globe-filter">
+        <summary>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span class="gf-title">Tahun</span>
+          <span class="gf-label" id="gf-label">Semua masa</span>
+        </summary>
+        <div class="gf-body">
+          <div class="gf-eras">
+            <button type="button" data-from="" data-to="500">Kuno</button>
+            <button type="button" data-from="500" data-to="1500">Abad Pertengahan</button>
+            <button type="button" data-from="1500" data-to="1900">Modern Awal</button>
+            <button type="button" data-from="1900" data-to="">Modern</button>
+          </div>
+          <div class="gf-range">
+            <label>Dari tahun
+              <input type="number" id="gf-from" placeholder="-356" step="1">
+            </label>
+            <label>Sampai tahun
+              <input type="number" id="gf-to" placeholder="1945" step="1">
+            </label>
+          </div>
+          <p class="gf-note">Tahun negatif = SM (contoh: -356 = 356 SM). Cerita tanpa tahun disembunyikan saat filter aktif.</p>
+          <button type="button" class="gf-reset" id="gf-reset">Atur ulang</button>
+        </div>
+      </details>
+    </div>
+
+    <p class="globe-hint" id="globe-hint">Putar bumi, lalu klik foto tokoh atau wilayah di sekitarnya</p>
+  </div>
+
+  <aside class="globe-panel" id="globe-panel" aria-live="polite" hidden>
+    <button type="button" class="globe-close" id="globe-close" aria-label="Tutup panel">&times;</button>
+    <div id="globe-panel-body"></div>
+  </aside>
+
+  <div class="globe-chips" id="globe-chips"></div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2"
+  onerror="document.getElementById('globe-loading').textContent='Library bumi 3D gagal dimuat dari internet. Cek koneksi, VPN, atau pemblokir iklan lalu muat ulang.'"></script>
+<script src="/js/globe.js"
+  onerror="document.getElementById('globe-loading').textContent='File /js/globe.js tidak ditemukan. Pastikan ada di public/js/globe.js.'"></script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main>
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Koleksimu</p>
+      <h1 class="section-title">Cerita Tersimpan</h1>
+    </div>
+    <p class="section-sub"><%= stories.length %> cerita</p>
+  </div>
+
+  <% if (!stories.length) { %>
+    <div class="empty">
+      <h2>Belum ada cerita tersimpan</h2>
+      <p>Tekan ikon penanda di pojok kartu cerita untuk menyimpannya di sini.</p>
+      <p><a class="btn-link" href="/">Jelajahi cerita</a></p>
+    </div>
+  <% } else { %>
+    <div class="grid" id="bm-grid">
+      <% stories.forEach(story => { %>
+        <%- include('../partials/card', { story }) %>
+      <% }) %>
+    </div>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>

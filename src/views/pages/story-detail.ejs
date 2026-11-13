@@ -1,0 +1,93 @@
+
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<%
+  const content = story.content || '';
+
+  const words = content
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;|&#160;/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+
+  const mins = Math.max(1, Math.ceil(words / 200));
+
+  const publishedDate = new Date(story.published_at);
+%>
+
+<main>
+  <article class="story">
+
+    <header class="story-head">
+
+      <div class="story-head-text">
+
+        <a
+          class="tag"
+          href="/story/category/<%= story.category_slug %>"
+        >
+          <%= story.category_name %>
+        </a>
+
+        <h1><%= story.title %></h1>
+
+        <p class="story-meta">
+
+          <time datetime="<%= publishedDate.toISOString() %>">
+            <%= publishedDate.toLocaleDateString('id-ID', {
+              dateStyle: 'long'
+            }) %>
+          </time>
+
+          <span aria-hidden="true">&middot;</span>
+
+          <span><%= mins %> menit baca</span>
+
+        </p>
+
+      </div>
+
+      <% if (story.image) { %>
+        <img
+          class="story-cover"
+          src="/uploads/<%= story.image %>"
+          alt="<%= story.title %>"
+        >
+      <% } %>
+
+    </header>
+
+    <div class="story-content">
+      <%- content
+        .replace(/&nbsp;|\u00a0/g, ' ')
+        .replace(/<p>\s*#\s*<\/p>/g, '<hr>')
+      %>
+    </div>
+
+  </article>
+
+  <% if (typeof related !== 'undefined' && related.length > 0) { %>
+
+    <section class="related" id="related">
+
+      <h2>Baca juga</h2>
+
+      <div class="grid">
+
+        <% related.forEach(r => { %>
+
+          <%- include('../partials/card', { story: r }) %>
+
+        <% }) %>
+
+      </div>
+
+    </section>
+
+  <% } %>
+
+</main>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,15 @@
+<aside class="sidebar">
+  <h2>Hi-Story</h2>
+  <p class="who">Login: <%= admin.username %></p>
+  <nav>
+    <a href="<%= adminPath %>">Dashboard</a>
+    <a href="<%= adminPath %>/stories">Kelola Cerita</a>
+    <a href="<%= adminPath %>/stories/create">Tambah Cerita</a>
+    <a href="<%= adminPath %>/categories">Kelola Kategori</a>
+    <a href="/" target="_blank">Lihat Situs</a>
+    <a href="<%= adminPath %>/locations">Kelola Lokasi</a>
+  </nav>
+  <form action="<%= adminPath %>/logout" method="POST">
+    <button type="submit">Logout</button>
+  </form>
+</aside>

@@ -1,0 +1,19 @@
+<% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+  <nav class="pagination">
+    <% if (currentPage > 1) { %>
+      <a href="<%= baseUrl %>?page=<%= currentPage - 1 %>">&laquo; Sebelumnya</a>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <% if (i === currentPage) { %>
+        <span class="active"><%= i %></span>
+      <% } else { %>
+        <a href="<%= baseUrl %>?page=<%= i %>"><%= i %></a>
+      <% } %>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <a href="<%= baseUrl %>?page=<%= currentPage + 1 %>">Berikutnya &raquo;</a>
+    <% } %>
+  </nav>
+<% } %>

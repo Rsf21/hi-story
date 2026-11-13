@@ -1,0 +1,31 @@
+<label>Cerita terkait (opsional)</label>
+<small>Pilih cerita yang mau direkomendasikan di bawah cerita ini. Kalau kosong, otomatis diisi cerita dari kategori yang sama.</small>
+
+<input type="text" id="related-filter" placeholder="Cari judul..." autocomplete="off">
+
+<div class="picker" id="related-list">
+  <% if (allStories.length === 0) { %>
+    <p>Belum ada cerita lain.</p>
+  <% } %>
+  <% allStories.forEach(s => { %>
+    <label class="picker-item">
+      <input type="checkbox" name="related" value="<%= s.id %>" <%= relatedIds.includes(s.id) ? 'checked' : '' %>>
+      <span><%= s.title %> <em><%= s.category_name %></em></span>
+    </label>
+  <% }) %>
+</div>
+
+<script>
+  (function () {
+    const filter = document.getElementById('related-filter');
+    const items = document.querySelectorAll('#related-list .picker-item');
+    filter.addEventListener('input', () => {
+      const q = filter.value.toLowerCase();
+      items.forEach((el) => {
+        el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+    // Enter di kolom cari jangan ikut submit form
+    filter.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
+  })();
+</script>

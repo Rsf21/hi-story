@@ -1,0 +1,10 @@
+<%- include('partials/admin-header') %>
+
+<h1>Dashboard</h1>
+<div class="cards">
+  <div class="stat"><strong><%= totalStories %></strong> Cerita</div>
+  <div class="stat"><strong><%= totalCategories %></strong> Kategori</div>
+</div>
+<a href="<%= adminPath %>/stories/create" class="btn">+ Tambah Cerita</a>
+
+<%- include('partials/admin-footer') %>

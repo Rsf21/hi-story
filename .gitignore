@@ -1,0 +1,19 @@
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# SSL Certificate
+certs/
+*.pem
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,20 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main>
+  <h1>Hasil pencarian: "<%= keyword %>"</h1>
+
+  <% if (stories.length === 0) { %>
+    <p>Ga ada cerita yang cocok.</p>
+  <% } %>
+
+  <% stories.forEach(story => { %>
+    <article>
+      <h2><a href="/story/<%= story.slug %>"><%= story.title %></a></h2>
+      <small><%= story.category_name %></small>
+      <p><%= story.summary %></p>
+    </article>
+  <% }) %>
+</main>
+
+<%- include('../partials/footer') %>

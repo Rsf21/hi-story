@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title><%= typeof title !== 'undefined' ? title + ' | Hi-Story' : 'Hi-Story' %></title>
+  <script>
+    (function () {
+      var d = document.documentElement, t = null;
+      try { t = localStorage.getItem('histori-theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      d.setAttribute('data-theme', t);
+      d.classList.add('js');
+      setTimeout(function () { if (!d.dataset.ready) d.classList.remove('js'); }, 2500);
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/site.js" defer></script>
+  <script src="/js/account.js" defer></script>
+</head>
+<body>
