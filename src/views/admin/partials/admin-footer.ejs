@@ -1,4 +1,67 @@
-  </main>
-</div>
+</main>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+
+    /* Menu burger */
+    var burger = document.getElementById('burger');
+    var menu = document.getElementById('side-menu');
+    var overlay = document.getElementById('overlay');
+    var closeBtn = document.getElementById('menu-close');
+
+    function setOpen(open) {
+      menu.classList.toggle('open', open);
+      overlay.classList.toggle('show', open);
+      burger.setAttribute('aria-expanded', open);
+      menu.setAttribute('aria-hidden', !open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    burger.addEventListener('click', function () { setOpen(true); });
+    closeBtn.addEventListener('click', function () { setOpen(false); });
+    overlay.addEventListener('click', function () { setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+
+    var wide = window.matchMedia('(min-width: 1000px)');
+    var onWide = function (e) { if (e.matches) setOpen(false); };
+    if (wide.addEventListener) wide.addEventListener('change', onWide);
+    else wide.addListener(onWide);
+
+    /* Mode gelap (kunci sama dengan situs publik) */
+    var themeBtn = document.getElementById('theme-toggle');
+    function syncTheme() {
+      themeBtn.setAttribute('aria-pressed', root.getAttribute('data-theme') === 'dark');
+    }
+    themeBtn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('histori-theme', next); } catch (e) {}
+      syncTheme();
+    });
+    syncTheme();
+
+    /* Tandai menu yang sedang dibuka */
+    var path = location.pathname.replace(/\/$/, '') || '/';
+    function mark(selector) {
+      var best = null, len = -1;
+      document.querySelectorAll(selector).forEach(function (a) {
+        if (a.target === '_blank') return;
+        var h = a.pathname.replace(/\/$/, '') || '/';
+        if ((path === h || path.indexOf(h + '/') === 0) && h.length > len) { best = a; len = h.length; }
+      });
+      if (best) best.setAttribute('aria-current', 'page');
+    }
+    mark('.main-nav a');
+    mark('.side-links a');
+
+    /* Label kolom untuk tampilan kartu di HP */
+    document.querySelectorAll('table').forEach(function (t) {
+      var heads = [].map.call(t.querySelectorAll('thead th'), function (h) { return h.textContent.trim(); });
+      t.querySelectorAll('tbody tr').forEach(function (r) {
+        [].forEach.call(r.children, function (c, i) { if (heads[i]) c.setAttribute('data-label', heads[i]); });
+      });
+    });
+  })();
+</script>
 </body>
 </html>

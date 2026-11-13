@@ -3,22 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= title %></title>
-  <style>
-    body { font-family: sans-serif; background: #f4f4f4; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    form { background: #fff; padding: 2rem; border-radius: 8px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
-    input, button { width: 100%; padding: .6rem; margin-top: .5rem; box-sizing: border-box; }
-    button { background: #222; color: #fff; border: 0; cursor: pointer; }
-    .error { color: #c00; margin-top: .5rem; }
-  </style>
+  <meta name="color-scheme" content="light dark">
+  <title><%= title %> | Hi-Story</title>
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('histori-theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/admin.css">
 </head>
-<body>
-  <form action="<%= adminPath %>/login" method="POST">
-    <h2>Login Admin</h2>
+<body class="login-body">
+  <form class="login-card" action="<%= adminPath %>/login" method="POST">
+    <p class="brand">Hi-Story<span class="badge">Admin</span></p>
+    <h1>Masuk</h1>
     <% if (error) { %><p class="error"><%= error %></p><% } %>
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Masuk</button>
+
+    <label>Username
+      <input type="text" name="username" autocomplete="username" required>
+    </label>
+    <label>Password
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+
+    <button type="submit" class="btn">Masuk</button>
   </form>
 </body>
 </html>

@@ -2756,3 +2756,86 @@ body:has(.globe-page) .site-footer {
     bottom: 5rem;
   }
 }
+/* Kartu beranda lebih kecil */
+.rail > .card {
+  width: clamp(150px, 13vw, 172px);
+  border-radius: var(--r-md);
+}
+
+.rail .card-body {
+  gap: 0.3rem;
+  padding: 0.8rem;
+}
+
+.rail .card .tag {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.6rem;
+}
+
+.rail .card-body h2 {
+  font-size: 1.1rem;
+  line-height: 1.12;
+}
+
+.rail .card-body p {
+  display: none;
+}
+
+.rail .save-btn {
+  top: 0.55rem;
+  right: 0.55rem;
+  width: 32px;
+  height: 32px;
+}
+
+.rail .save-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.rail {
+  gap: 0.85rem;
+}
+
+/* Grid kategori dan simpanan ikut lebih ringkas */
+.grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+  gap: 0.9rem;
+}
+
+/* Foto saat membaca sedikit lebih besar */
+.story-head {
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 2rem;
+}
+
+.story-cover {
+  width: 280px;
+  aspect-ratio: 4 / 3;
+}
+
+@media (max-width: 640px) {
+  .rail > .card {
+    width: 44%;
+    min-width: 138px;
+  }
+
+  .rail .card-body h2 {
+    font-size: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .story-head {
+    grid-template-columns: 1fr;
+  }
+
+  .story-cover {
+    width: 100%;
+    max-height: 240px;
+    aspect-ratio: 16 / 10;
+  }
+}
