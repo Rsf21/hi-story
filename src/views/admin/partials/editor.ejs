@@ -3,33 +3,119 @@
 <div id="editor" style="background:#fff;min-height:320px"><%- content %></div>
 <input type="hidden" name="content" id="content-input">
 
+<dialog class="fig-dialog" id="fig-dialog">
+  <div class="fig-box">
+    <h3 id="fig-title">Sisipkan gambar</h3>
+    <p class="fig-warn">Mencantumkan sumber saja belum cukup. Pastikan gambar berlisensi bebas (domain publik, Creative Commons) atau kamu punya izin pakai dari pemiliknya.</p>
+
+    <label>Gambar
+      <input type="file" id="fig-file" accept="image/jpeg,image/png,image/webp">
+    </label>
+    <img id="fig-preview" alt="" hidden>
+
+    <label>Keterangan gambar
+      <input type="text" id="fig-caption" maxlength="200" placeholder="Mis. Relief Aleksander Agung di Museum Arkeologi">
+    </label>
+    <label>Sumber gambar (wajib)
+      <input type="text" id="fig-source" maxlength="200" placeholder="Mis. Wikimedia Commons / Museum Nasional">
+    </label>
+    <label>Tautan sumber
+      <input type="url" id="fig-url" placeholder="https://...">
+    </label>
+    <label>Lisensi
+      <input type="text" id="fig-license" list="fig-licenses" maxlength="80" placeholder="Mis. Domain publik, CC BY-SA 4.0">
+    </label>
+    <datalist id="fig-licenses">
+      <option value="Domain publik"></option>
+      <option value="CC0"></option>
+      <option value="CC BY 4.0"></option>
+      <option value="CC BY-SA 4.0"></option>
+      <option value="Izin pemilik"></option>
+      <option value="Karya sendiri"></option>
+    </datalist>
+
+    <p class="fig-error" id="fig-error" hidden></p>
+
+    <div class="fig-actions">
+      <button type="button" id="fig-remove" class="fig-danger" hidden>Hapus gambar</button>
+      <span class="fig-spacer"></span>
+      <button type="button" id="fig-cancel">Batal</button>
+      <button type="button" id="fig-save" class="fig-primary">Simpan</button>
+    </div>
+  </div>
+</dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script>
+(function () {
   const uploadUrl = '<%= adminPath %>/upload-image';
+  const MAX_BYTES = 5 * 1024 * 1024;
 
-  function imageHandler() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/jpeg,image/png,image/webp';
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-      const fd = new FormData();
-      fd.append('image', file);
-      try {
-        const res = await fetch(uploadUrl, { method: 'POST', body: fd });
-        if (!res.ok) throw new Error();
-        const { url } = await res.json();
-        const range = quill.getSelection(true);
-        quill.insertEmbed(range.index, 'image', url);
-        quill.setSelection(range.index + 1);
-      } catch {
-        alert('Upload gambar gagal (format JPG/PNG/WEBP, maks 5 MB)');
+  const BlockEmbed = Quill.import('blots/block/embed');
+  const Delta = Quill.import('delta');
+
+  /* ---------- Blot: gambar + sumber ---------- */
+  class StoryFigure extends BlockEmbed {
+    static create(v) {
+      const node = super.create();
+      node.setAttribute('contenteditable', 'false');
+      node.dataset.caption = v.caption || '';
+      node.dataset.source = v.source || '';
+      node.dataset.url = v.url || '';
+      node.dataset.license = v.license || '';
+
+      const img = document.createElement('img');
+      img.setAttribute('src', v.src);
+      img.setAttribute('alt', v.caption || '');
+      img.setAttribute('loading', 'lazy');
+      node.appendChild(img);
+
+      const cap = document.createElement('figcaption');
+
+      if (v.caption) {
+        const t = document.createElement('span');
+        t.className = 'fc-text';
+        t.textContent = v.caption;
+        cap.appendChild(t);
       }
-    };
-    input.click();
-  }
 
+      const credit = document.createElement('span');
+      credit.className = 'fc-credit';
+      credit.append('Sumber: ');
+      if (v.url) {
+        const a = document.createElement('a');
+        a.href = v.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer nofollow';
+        a.textContent = v.source;
+        credit.appendChild(a);
+      } else {
+        credit.append(v.source || '');
+      }
+      if (v.license) credit.append(' \u00b7 ' + v.license);
+      cap.appendChild(credit);
+
+      node.appendChild(cap);
+      return node;
+    }
+
+    static value(node) {
+      const img = node.querySelector('img');
+      return {
+        src: img ? img.getAttribute('src') : '',
+        caption: node.dataset.caption || '',
+        source: node.dataset.source || '',
+        url: node.dataset.url || '',
+        license: node.dataset.license || ''
+      };
+    }
+  }
+  StoryFigure.blotName = 'storyFigure';
+  StoryFigure.tagName = 'figure';
+  StoryFigure.className = 'story-figure';
+  Quill.register(StoryFigure);
+
+  /* ---------- Editor ---------- */
   const quill = new Quill('#editor', {
     theme: 'snow',
     placeholder: 'Tulis ceritanya di sini...',
@@ -43,11 +129,160 @@
           ['link', 'image'],
           ['clean']
         ],
-        handlers: { image: imageHandler }
+        handlers: { image: () => openDialog(null) }
       }
     }
   });
 
+  // Gambar hasil paste (base64) dibuang; gunakan tombol gambar agar sumbernya tercatat
+  quill.clipboard.addMatcher('img[src^="data:"]', () => new Delta());
+
+  /* ---------- Kotak isian gambar ---------- */
+  const $ = (id) => document.getElementById(id);
+  const dlg = $('fig-dialog');
+  document.body.appendChild(dlg); // di luar <form>, supaya tidak ikut terkirim
+
+  const f = {
+    title: $('fig-title'),
+    file: $('fig-file'),
+    preview: $('fig-preview'),
+    caption: $('fig-caption'),
+    source: $('fig-source'),
+    url: $('fig-url'),
+    license: $('fig-license'),
+    error: $('fig-error'),
+    save: $('fig-save'),
+    cancel: $('fig-cancel'),
+    remove: $('fig-remove')
+  };
+
+  let ctx = null; // { index, replace, src }
+
+  function showError(msg) {
+    f.error.textContent = msg;
+    f.error.hidden = !msg;
+  }
+
+  function openDialog(figure) {
+    showError('');
+    f.file.value = '';
+    f.preview.hidden = true;
+    f.preview.removeAttribute('src');
+    ['caption', 'source', 'url', 'license'].forEach((k) => { f[k].value = ''; });
+
+    if (figure) {
+      const v = StoryFigure.value(figure);
+      ctx = { index: quill.getIndex(Quill.find(figure)), replace: true, src: v.src };
+      f.title.textContent = 'Ubah gambar & sumber';
+      f.caption.value = v.caption;
+      f.source.value = v.source;
+      f.url.value = v.url;
+      f.license.value = v.license;
+      f.preview.src = v.src;
+      f.preview.hidden = false;
+      f.remove.hidden = false;
+    } else {
+      // gambar masuk tepat di bawah baris tempat kursor berada (mis. judul bab)
+      const sel = quill.getSelection(true);
+      const at = sel ? sel.index : quill.getLength() - 1;
+      const [line] = quill.getLine(at);
+      const index = line ? quill.getIndex(line) + line.length() : quill.getLength();
+      ctx = { index, replace: false, src: '' };
+      f.title.textContent = 'Sisipkan gambar';
+      f.remove.hidden = true;
+    }
+
+    dlg.showModal();
+    (figure ? f.source : f.file).focus();
+  }
+
+  function closeDialog() {
+    if (dlg.open) dlg.close();
+    ctx = null;
+  }
+
+  async function upload(file) {
+    const fd = new FormData();
+    fd.append('image', file);
+    const res = await fetch(uploadUrl, { method: 'POST', body: fd });
+    if (!res.ok) throw new Error('upload');
+    return (await res.json()).url;
+  }
+
+  f.file.addEventListener('change', () => {
+    const file = f.file.files[0];
+    if (!file) return;
+    f.preview.src = URL.createObjectURL(file);
+    f.preview.hidden = false;
+  });
+
+  f.save.addEventListener('click', async () => {
+    if (!ctx) return;
+    const file = f.file.files[0];
+    const source = f.source.value.trim();
+    const url = f.url.value.trim();
+
+    if (!file && !ctx.src) return showError('Pilih file gambar dulu.');
+    if (file && file.size > MAX_BYTES) return showError('Ukuran gambar maksimal 5 MB.');
+    if (source.length < 2) return showError('Sumber gambar wajib diisi.');
+    if (url && !/^https?:\/\/\S+$/i.test(url)) return showError('Tautan sumber harus diawali http:// atau https://');
+
+    f.save.disabled = true;
+    f.save.textContent = 'Menyimpan...';
+    showError('');
+
+    try {
+      const src = file ? await upload(file) : ctx.src;
+      const value = {
+        src,
+        caption: f.caption.value.trim(),
+        source,
+        url,
+        license: f.license.value.trim()
+      };
+
+      if (ctx.replace) {
+        quill.deleteText(ctx.index, 1, 'user');
+        quill.insertEmbed(ctx.index, 'storyFigure', value, 'user');
+      } else {
+        quill.insertEmbed(ctx.index, 'storyFigure', value, 'user');
+        if (quill.getLength() <= ctx.index + 1) quill.insertText(ctx.index + 1, '\n', 'user');
+      }
+      closeDialog();
+    } catch (err) {
+      showError('Upload gagal. Pastikan formatnya JPG, PNG, atau WEBP dan ukurannya maksimal 5 MB.');
+    } finally {
+      f.save.disabled = false;
+      f.save.textContent = 'Simpan';
+    }
+  });
+
+  f.remove.addEventListener('click', () => {
+    if (ctx && ctx.replace && confirm('Hapus gambar ini dari cerita?')) {
+      quill.deleteText(ctx.index, 1, 'user');
+      closeDialog();
+    }
+  });
+
+  f.cancel.addEventListener('click', closeDialog);
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) closeDialog(); });
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file') {
+      e.preventDefault();
+      f.save.click();
+    }
+  });
+
+  // klik gambar di editor = ubah gambar dan sumbernya
+  quill.root.addEventListener('click', (e) => {
+    const fig = e.target.closest('figure.story-figure');
+    if (fig) {
+      e.preventDefault();
+      openDialog(fig);
+    }
+  });
+
+  /* ---------- Simpan ---------- */
   const form = document.querySelector('#editor').closest('form');
   form.addEventListener('submit', (e) => {
     const hasImage = quill.root.querySelector('img');
@@ -56,7 +291,18 @@
       alert('Isi cerita wajib diisi');
       return;
     }
-   document.querySelector('#content-input').value =
-  quill.getSemanticHTML().replace(/&nbsp;|\u00a0/g, ' ');
+
+    const loose = Array.from(quill.root.querySelectorAll('img'))
+      .filter((img) => !img.closest('figure.story-figure'));
+    if (loose.length && !confirm(loose.length + ' gambar belum punya sumber. Tetap simpan?')) {
+      e.preventDefault();
+      return;
+    }
+
+    document.querySelector('#content-input').value = quill
+      .getSemanticHTML()
+      .replace(/&nbsp;|\u00a0/g, ' ')
+      .replace(/\s+contenteditable="false"/g, '');
   });
+})();
 </script>

@@ -68,12 +68,17 @@ const formExtras = async (excludeId, selected) => ({
 export const listStories = async (req, res, next) => {
   try {
     const stories = await getAllStories(1000, 0);
+
+    console.log("JUMLAH CERITA ADMIN:", stories.length);
+    console.log("DATA CERITA PERTAMA:", stories[0]);
+
     res.render("admin/stories/index", {
       title: "Kelola Cerita",
       admin: req.session.admin,
       stories,
     });
   } catch (err) {
+    console.error("ERROR LIST STORIES:", err);
     next(err);
   }
 };

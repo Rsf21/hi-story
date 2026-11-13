@@ -986,3 +986,176 @@ td .btn {
     animation: none !important;
   }
 }
+
+/* Gambar + sumber di editor */
+.ql-editor figure.story-figure {
+  margin: 1rem 0;
+  padding: 10px;
+  border: 1px dashed var(--line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ql-editor figure.story-figure:hover {
+  border-color: var(--accent);
+}
+.ql-editor figure.story-figure img {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+  margin: 0 auto;
+  border-radius: var(--r-sm);
+}
+.ql-editor figure.story-figure figcaption {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--muted);
+}
+.ql-editor figure.story-figure figcaption span {
+  display: block;
+}
+.ql-editor figure.story-figure::after {
+  content: "Klik untuk ubah gambar & sumber";
+  display: block;
+  margin-top: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Kotak isian gambar */
+.fig-dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  overflow: auto;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+.fig-dialog::backdrop {
+  background: rgba(6, 10, 14, 0.55);
+}
+.fig-box {
+  padding: 24px;
+}
+
+.fig-box h3 {
+  margin: 0 0 12px;
+  font-family: var(--f-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.fig-warn {
+  margin: 0 0 4px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: color-mix(in srgb, var(--gold) 13%, transparent);
+  border-radius: var(--r-md);
+}
+
+.fig-box label {
+  display: block;
+  margin-top: 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--heading);
+}
+
+.fig-box input[type="text"],
+.fig-box input[type="url"],
+.fig-box input[type="file"] {
+  display: block;
+  width: 100%;
+  margin-top: 7px;
+  padding: 10px 12px;
+  font-size: 0.97rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.fig-box input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+#fig-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 160px;
+  margin-top: 10px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+#fig-preview[hidden],
+.fig-error[hidden],
+.fig-danger[hidden] {
+  display: none;
+}
+
+.fig-error {
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  font-size: 0.9rem;
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-radius: var(--r-md);
+}
+
+.fig-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+.fig-spacer {
+  flex: 1;
+}
+
+.fig-actions button {
+  padding: 9px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--heading);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+.fig-actions .fig-primary {
+  color: var(--bg);
+  background: var(--heading);
+  border-color: var(--heading);
+}
+.fig-actions .fig-primary:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.fig-actions .fig-danger {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-color: transparent;
+}
+.fig-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
