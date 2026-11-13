@@ -89,11 +89,33 @@ export const showStoryDetail = async (req, res, next) => {
     if (!story) {
       return res.status(404).render("pages/404", { title: "Tidak ditemukan" });
     }
+
     const related = await getRelatedStories(story);
+
+    const siteUrl = "https://hi-story-tau.vercel.app";
+
+    const description = (story.content || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/&nbsp;|&#160;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 200);
+
+    const imageUrl = story.image
+      ? `${siteUrl}/uploads/${encodeURIComponent(story.image)}`
+      : null;
+
     res.render("pages/story-detail", {
       title: story.title,
       story,
       related,
+
+      metaDescription: description,
+      ogTitle: `${story.title} | Hi-Story`,
+      ogDescription: description,
+      ogImage: imageUrl,
+      ogUrl: `${siteUrl}/story/${story.slug}`,
+      ogType: "article",
     });
   } catch (err) {
     next(err);

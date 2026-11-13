@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title><%= typeof title !== 'undefined' ? title + ' | Hi-Story' : 'Hi-Story' %></title>
+
+<meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Hi-Story — Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
+
+<meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+<meta property="og:site_name" content="Hi-Story">
+<meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Hi-Story — Jelajahi Sejarah Dunia' %>">
+<meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : 'Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
+
+<% if (typeof ogImage !== 'undefined' && ogImage) { %>
+<meta property="og:image" content="<%= ogImage %>">
+<% } %>
+
+<meta property="og:url" content="<%= typeof ogUrl !== 'undefined' ? ogUrl : 'https://hi-story-tau.vercel.app/' %>">
+<meta name="twitter:card" content="summary_large_image">
+
   <script>
     (function () {
       var d = document.documentElement, t = null;
