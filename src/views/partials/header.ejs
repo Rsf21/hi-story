@@ -1,37 +1,58 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
+
   <title><%= typeof title !== 'undefined' ? title + ' | Hi-Story' : 'Hi-Story' %></title>
 
-<meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Hi-Story — Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Hi-Story — Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
 
-<meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
-<meta property="og:site_name" content="Hi-Story">
-<meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Hi-Story — Jelajahi Sejarah Dunia' %>">
-<meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : 'Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
+  <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+  <meta property="og:site_name" content="Hi-Story">
+  <meta property="og:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Hi-Story — Jelajahi Sejarah Dunia' %>">
+  <meta property="og:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : 'Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
 
-<% if (typeof ogImage !== 'undefined' && ogImage) { %>
-<meta property="og:image" content="<%= ogImage %>">
-<% } %>
+  <% if (typeof ogImage !== 'undefined' && ogImage) { %>
+    <meta property="og:image" content="<%= ogImage %>">
+    <meta property="og:image:secure_url" content="<%= ogImage %>">
+    <meta property="og:image:alt" content="Hi-Story — Jelajahi Sejarah Dunia">
+  <% } %>
 
-<meta property="og:url" content="<%= typeof ogUrl !== 'undefined' ? ogUrl : 'https://hai-story.vercel.app/' %>">
-<meta name="twitter:card" content="summary_large_image">
+  <meta property="og:url" content="<%= typeof ogUrl !== 'undefined' ? ogUrl : 'https://hai-story.vercel.app/' %>">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof ogTitle !== 'undefined' ? ogTitle : 'Hi-Story — Jelajahi Sejarah Dunia' %>">
+  <meta name="twitter:description" content="<%= typeof ogDescription !== 'undefined' ? ogDescription : 'Jelajahi kisah sejarah, tokoh dunia, dan peristiwa bersejarah.' %>">
+
+  <% if (typeof ogImage !== 'undefined' && ogImage) { %>
+    <meta name="twitter:image" content="<%= ogImage %>">
+  <% } %>
 
   <script>
     (function () {
       var d = document.documentElement, t = null;
-      try { t = localStorage.getItem('histori-theme'); } catch (e) {}
+      try {
+        t = localStorage.getItem('histori-theme');
+      } catch (e) {}
+
       if (t !== 'light' && t !== 'dark') {
-        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
       }
+
       d.setAttribute('data-theme', t);
       d.classList.add('js');
-      setTimeout(function () { if (!d.dataset.ready) d.classList.remove('js'); }, 2500);
+
+      setTimeout(function () {
+        if (!d.dataset.ready) d.classList.remove('js');
+      }, 2500);
     })();
   </script>
+
   <link rel="stylesheet" href="/css/style.css">
   <script src="/js/site.js" defer></script>
   <script src="/js/account.js" defer></script>

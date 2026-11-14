@@ -7,11 +7,16 @@ import {
   countStoriesByCategory,
   getRelatedStories,
 } from "../../models/storyModels.js";
+
 import {
   getAllCategories,
   getCategoryBySlug,
 } from "../../models/categoryModels.js";
+
 import { getPublicImageUrl } from "../services/supabaseStorage.js";
+
+const SITE_URL = "https://hai-story.vercel.app";
+const HOME_OG_IMAGE = `${SITE_URL}/images/og-home.jpg`;
 
 const PER_PAGE = 9;
 const HOME_PER_PAGE = 12;
@@ -59,6 +64,18 @@ const withImageUrl = (story) => ({
   imageUrl: resolveImageUrl(story.image),
 });
 
+const createDescription = (content, fallback) => {
+  const description = (content || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;|&#160;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 200);
+
+  return description || fallback;
+};
+
 export const showHome = async (req, res, next) => {
   try {
     const page = getPage(req);
@@ -84,11 +101,13 @@ export const showHome = async (req, res, next) => {
       isGuest: isGuestSession(req),
       bookmarks: status,
       baseUrl: "/",
+      metaDescription:
+        "Hi-Story — Jelajahi kisah sejarah, tokoh dunia, kerajaan, dan peristiwa bersejarah.",
       ogTitle: "Hi-Story — Jelajahi Sejarah Dunia",
       ogDescription:
         "Jelajahi kisah tokoh, kerajaan, dan peristiwa bersejarah dunia.",
-      ogImage: "https://hi-story-tau.vercel.app/images/og-home.jpg",
-      ogUrl: "https://hi-story-tau.vercel.app/",
+      ogImage: HOME_OG_IMAGE,
+      ogUrl: `${SITE_URL}/`,
       ogType: "website",
     });
   } catch (err) {
@@ -118,15 +137,28 @@ export const showByCategory = async (req, res, next) => {
     );
 
     const categories = await getAllCategories();
+    const storiesWithImages = stories.map(withImageUrl);
+
+    const categoryImage =
+      storiesWithImages.find((story) => story.imageUrl)?.imageUrl ||
+      HOME_OG_IMAGE;
+
+    const categoryDescription = `Jelajahi berbagai cerita sejarah dalam kategori ${category.name} di Hi-Story.`;
 
     res.render("pages/category", {
       title: category.name,
       category,
-      stories: stories.map(withImageUrl),
+      stories: storiesWithImages,
       categories,
       currentPage,
       totalPages,
       baseUrl: `/story/category/${category.slug}`,
+      metaDescription: categoryDescription,
+      ogTitle: `${category.name} | Hi-Story`,
+      ogDescription: categoryDescription,
+      ogImage: categoryImage,
+      ogUrl: `${SITE_URL}/story/category/${category.slug}`,
+      ogType: "website",
     });
   } catch (err) {
     next(err);
@@ -147,14 +179,16 @@ export const showStoryDetail = async (req, res, next) => {
     const relatedData = await getRelatedStories(storyData);
     const related = relatedData.map(withImageUrl);
 
-    const siteUrl = "https://hi-story-tau.vercel.app";
+    const description = createDescription(
+      story.content,
+      `Baca kisah ${story.title} secara lengkap di Hi-Story.`,
+    );
 
-    const description = (story.content || "")
-      .replace(/<[^>]*>/g, " ")
-      .replace(/&nbsp;|&#160;/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 200);
+    const storyImage = story.imageUrl
+      ? /^https?:\/\//i.test(story.imageUrl)
+        ? story.imageUrl
+        : `${SITE_URL}${story.imageUrl.startsWith("/") ? "" : "/"}${story.imageUrl}`
+      : HOME_OG_IMAGE;
 
     res.render("pages/story-detail", {
       title: story.title,
@@ -163,8 +197,8 @@ export const showStoryDetail = async (req, res, next) => {
       metaDescription: description,
       ogTitle: `${story.title} | Hi-Story`,
       ogDescription: description,
-      ogImage: story.imageUrl,
-      ogUrl: `${siteUrl}/story/${story.slug}`,
+      ogImage: storyImage,
+      ogUrl: `${SITE_URL}/story/${story.slug}`,
       ogType: "article",
     });
   } catch (err) {
@@ -183,6 +217,12 @@ export const searchHandler = async (req, res, next) => {
       keyword,
       stories: stories.map(withImageUrl),
       categories,
+      metaDescription: `Hasil pencarian ${keyword} di Hi-Story.`,
+      ogTitle: `Cari: ${keyword} | Hi-Story`,
+      ogDescription: `Temukan cerita sejarah terkait ${keyword} di Hi-Story.`,
+      ogImage: HOME_OG_IMAGE,
+      ogUrl: `${SITE_URL}/search?q=${encodeURIComponent(keyword)}`,
+      ogType: "website",
     });
   } catch (err) {
     next(err);
