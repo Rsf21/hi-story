@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowed = ["image/jpeg", "image/png", "image/webp"];
+  const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
   if (allowed.includes(file.mimetype)) return cb(null, true);
   const err = new Error("File harus berupa gambar JPG, PNG, atau WEBP");
   err.status = 400;

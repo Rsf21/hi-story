@@ -48,8 +48,8 @@ export const showHome = async (req, res, next) => {
       ogTitle: "Hi-Story — Jelajahi Sejarah Dunia",
       ogDescription:
         "Jelajahi kisah tokoh, kerajaan, dan peristiwa bersejarah dunia.",
-      ogImage: "https://hi-story-tau.vercel.app/images/og-home.jpg",
-      ogUrl: "https://hi-story-tau.vercel.app/",
+      ogImage: "https://hai-story.vercel.app/images/og-home.jpg",
+      ogUrl: "https://hai-story.vercel.app/",
       ogType: "website",
     });
   } catch (err) {
