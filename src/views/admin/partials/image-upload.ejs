@@ -64,8 +64,15 @@
       });
 
       if (!uploadResponse.ok) {
-        throw new Error('Gagal mengunggah gambar ke Supabase.');
-      }
+  const errorText = await uploadResponse.text();
+
+  console.error("SUPABASE UPLOAD STATUS:", uploadResponse.status);
+  console.error("SUPABASE UPLOAD ERROR:", errorText);
+  console.error("FILE TYPE:", file.type);
+  console.error("FILE SIZE:", file.size);
+
+  throw new Error("Upload gagal: " + errorText);
+}
 
       imageInput.value = data.path;
 

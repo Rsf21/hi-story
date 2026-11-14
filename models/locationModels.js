@@ -1,7 +1,34 @@
 import pool from "../src/config/database.js";
+import { getPublicImageUrl } from "../src/services/supabaseStorage.js";
+
+const resolveImageUrl = (image) => {
+  if (!image) return null;
+
+  // Jika sudah berupa URL lengkap, gunakan langsung.
+  if (/^https?:\/\//i.test(image)) {
+    return image;
+  }
+
+  // Format nama file gambar Supabase Storage.
+  const supabaseImagePattern =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp)$/i;
+
+  if (supabaseImagePattern.test(image)) {
+    return getPublicImageUrl(image);
+  }
+
+  // Gambar lama yang masih menggunakan folder uploads.
+  const filename = image
+    .replace(/^\/?uploads\//i, "")
+    .split("/")
+    .pop();
+
+  return `/uploads/${encodeURIComponent(filename)}`;
+};
 
 export const getAllLocations = async () => {
   const [rows] = await pool.query("SELECT * FROM locations ORDER BY name");
+
   return rows;
 };
 
@@ -10,6 +37,7 @@ export const createLocation = async ({ name, lat, lng, radius_km }) => {
     "INSERT INTO locations (name, lat, lng, radius_km) VALUES (?, ?, ?, ?)",
     [name, lat, lng, radius_km],
   );
+
   return result.insertId;
 };
 
@@ -19,9 +47,19 @@ export const deleteLocation = async (id) => {
 
 export const getGlobeData = async () => {
   const [rows] = await pool.query(
-    `SELECT l.id AS location_id, l.name AS location_name, l.lat, l.lng, l.radius_km,
-            s.title, s.slug, s.summary, s.image, s.year_start, s.year_end,
-            c.name AS category_name
+    `SELECT
+        l.id AS location_id,
+        l.name AS location_name,
+        l.lat,
+        l.lng,
+        l.radius_km,
+        s.title,
+        s.slug,
+        s.summary,
+        s.image,
+        s.year_start,
+        s.year_end,
+        c.name AS category_name
      FROM locations l
      JOIN stories s ON s.location_id = l.id
      JOIN categories c ON s.category_id = c.id
@@ -29,6 +67,7 @@ export const getGlobeData = async () => {
   );
 
   const map = new Map();
+
   for (const r of rows) {
     if (!map.has(r.location_id)) {
       map.set(r.location_id, {
@@ -40,20 +79,22 @@ export const getGlobeData = async () => {
         stories: [],
       });
     }
+
     map.get(r.location_id).stories.push({
       title: r.title,
       slug: r.slug,
       summary: r.summary,
-      image: r.image,
+      image: resolveImageUrl(r.image),
       category: r.category_name,
       year_start: r.year_start,
       year_end: r.year_end,
     });
   }
+
   return [...map.values()];
 };
 
-// pencarian AJAX: judul, ringkasan, atau nama lokasi
+// Pencarian AJAX: judul, ringkasan, atau nama lokasi.
 export const searchGlobe = async (
   q,
   { from = null, to = null, limit = 8 } = {},
@@ -63,23 +104,36 @@ export const searchGlobe = async (
   const starts = `${esc}%`;
 
   const where = ["(s.title LIKE ? OR s.summary LIKE ? OR l.name LIKE ?)"];
+
   const params = [like, like, like];
 
   if (from !== null) {
     where.push(
       "s.year_start IS NOT NULL AND COALESCE(s.year_end, s.year_start) >= ?",
     );
+
     params.push(from);
   }
+
   if (to !== null) {
     where.push("s.year_start IS NOT NULL AND s.year_start <= ?");
+
     params.push(to);
   }
+
   params.push(starts, limit);
 
   const [rows] = await pool.query(
-    `SELECT s.title, s.slug, s.summary, s.image, s.year_start, s.year_end,
-            c.name AS category, l.id AS location_id, l.name AS location_name
+    `SELECT
+        s.title,
+        s.slug,
+        s.summary,
+        s.image,
+        s.year_start,
+        s.year_end,
+        c.name AS category,
+        l.id AS location_id,
+        l.name AS location_name
      FROM stories s
      JOIN locations l ON s.location_id = l.id
      JOIN categories c ON s.category_id = c.id
@@ -88,5 +142,9 @@ export const searchGlobe = async (
      LIMIT ?`,
     params,
   );
-  return rows;
+
+  return rows.map((row) => ({
+    ...row,
+    image: resolveImageUrl(row.image),
+  }));
 };
