@@ -24,28 +24,39 @@ const getPage = (req) => {
 const resolveImageUrl = (image) => {
   if (!image) return null;
 
-  if (/^https?:\/\//i.test(image)) {
-    return image;
+  let value = String(image).trim();
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
   }
+
+  value = value.replace(/^\/+/, "");
+
+  if (/^uploads\/https?:\/\//i.test(value)) {
+    return value.replace(/^uploads\//i, "");
+  }
+
+  value = value.replace(/^uploads\//i, "");
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  const filename = value.split("/").pop();
 
   const supabaseImagePattern =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|png|webp)$/i;
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp)$/i;
 
-  if (supabaseImagePattern.test(image)) {
-    return getPublicImageUrl(image);
+  if (supabaseImagePattern.test(filename)) {
+    return getPublicImageUrl(filename);
   }
-
-  const filename = image
-    .replace(/^\/?uploads\//i, "")
-    .split("/")
-    .pop();
 
   return `/uploads/${encodeURIComponent(filename)}`;
 };
 
 const withImageUrl = (story) => ({
   ...story,
-  image: resolveImageUrl(story.image),
+  imageUrl: resolveImageUrl(story.image),
 });
 
 export const showHome = async (req, res, next) => {
@@ -152,7 +163,7 @@ export const showStoryDetail = async (req, res, next) => {
       metaDescription: description,
       ogTitle: `${story.title} | Hi-Story`,
       ogDescription: description,
-      ogImage: story.image,
+      ogImage: story.imageUrl,
       ogUrl: `${siteUrl}/story/${story.slug}`,
       ogType: "article",
     });

@@ -180,14 +180,13 @@ body {
   letter-spacing: -0.01em;
 }
 
-.brand::after {
-  content: "";
-  display: inline-block;
-  width: 0.3em;
-  height: 0.3em;
-  margin-left: 0.1em;
-  background: var(--gold);
-  border-radius: 50%;
+.brand {
+  flex: none;
+  font-family: var(--f-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
 }
 
 .burger {

@@ -1,3 +1,4 @@
+
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
@@ -11,11 +12,18 @@
   <div class="grid grid-compact">
     <% stories.forEach(story => { %>
       <a href="/story/<%= story.slug %>" class="card">
-        <% if (story.image) { %>
-          <img src="/uploads/<%= story.image %>" alt="<%= story.title %>" loading="lazy">
+        <% if (story.imageUrl) { %>
+          <img
+            src="<%= story.imageUrl %>"
+            alt="<%= story.title %>"
+            loading="lazy"
+          >
         <% } else { %>
-          <div class="card-noimg"><%= story.title.charAt(0).toUpperCase() %></div>
+          <div class="card-noimg">
+            <%= story.title.charAt(0).toUpperCase() %>
+          </div>
         <% } %>
+
         <div class="card-body">
           <h2><%= story.title %></h2>
           <p><%= story.summary %></p>
