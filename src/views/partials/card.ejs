@@ -1,19 +1,54 @@
-<% const _saved = typeof savedIds !== 'undefined' && savedIds.includes(story.id); %>
+
+<%
+  const _saved = typeof savedIds !== 'undefined' && savedIds.includes(story.id);
+
+  const image = story.imageUrl || story.image || null;
+
+  const cardImage = !image
+    ? null
+    : /^https?:\/\//i.test(image)
+      ? image
+      : `/uploads/${encodeURIComponent(
+          image.replace(/^\/?uploads\//i, '').split('/').pop()
+        )}`;
+%>
+
 <div class="card">
-  <% if (story.image) { %>
-    <img src="/uploads/<%= story.image %>" alt="" loading="lazy" draggable="false">
+  <% if (cardImage) { %>
+    <img
+      src="<%= cardImage %>"
+      alt=""
+      loading="lazy"
+      draggable="false"
+    >
   <% } else { %>
-    <div class="card-noimg" aria-hidden="true"><%= story.title.charAt(0).toUpperCase() %></div>
+    <div class="card-noimg" aria-hidden="true">
+      <%= story.title.charAt(0).toUpperCase() %>
+    </div>
   <% } %>
 
-  <button type="button" class="save-btn<%= _saved ? ' saved' : '' %>" data-story="<%= story.id %>"
-          aria-pressed="<%= _saved %>" aria-label="<%= _saved ? 'Hapus dari simpanan' : 'Simpan cerita' %>"
-          title="<%= _saved ? 'Hapus dari simpanan' : 'Simpan cerita' %>">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+  <button
+    type="button"
+    class="save-btn<%= _saved ? ' saved' : '' %>"
+    data-story="<%= story.id %>"
+    aria-pressed="<%= _saved %>"
+    aria-label="<%= _saved ? 'Hapus dari simpanan' : 'Simpan cerita' %>"
+    title="<%= _saved ? 'Hapus dari simpanan' : 'Simpan cerita' %>"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+    </svg>
   </button>
 
   <div class="card-body">
-    <h2><a class="card-link" href="/story/<%= story.slug %>"><%= story.title %></a></h2>
-    <% if (story.summary) { %><p><%= story.summary %></p><% } %>
+    <h2>
+      <a class="card-link" href="/story/<%= story.slug %>">
+        <%= story.title %>
+      </a>
+    </h2>
+
+    <% if (story.summary) { %>
+      <p><%= story.summary %></p>
+    <% } %>
   </div>
 </div>

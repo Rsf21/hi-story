@@ -6,7 +6,6 @@ import {
   handleLogout,
 } from "../controllers/authControllers.js";
 import { requireAdmin } from "../middlewares/authMiddlewares.js";
-import { upload } from "../middlewares/upload.js";
 import { showDashboard } from "../controllers/admin/adminDashboardControllers.js";
 import {
   listStories,
@@ -46,15 +45,15 @@ router.get("/", requireAdmin, showDashboard);
 router.post(
   "/upload-image",
   requireAdmin,
-  upload.single("image"),
+  express.json({ limit: "10kb" }),
   handleImageUpload,
 );
 
 router.get("/stories", requireAdmin, listStories);
 router.get("/stories/create", requireAdmin, showCreate);
-router.post("/stories", requireAdmin, upload.single("image"), handleCreate);
+router.post("/stories", requireAdmin, handleCreate);
 router.get("/stories/:id/edit", requireAdmin, showEdit);
-router.post("/stories/:id", requireAdmin, upload.single("image"), handleUpdate);
+router.post("/stories/:id", requireAdmin, handleUpdate);
 router.post("/stories/:id/delete", requireAdmin, handleDelete);
 
 router.get("/categories", requireAdmin, listCategories);

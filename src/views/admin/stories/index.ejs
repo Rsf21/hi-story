@@ -1,3 +1,4 @@
+
 <%- include('../partials/admin-header') %>
 
 <h1>Kelola Cerita</h1>
@@ -5,24 +6,63 @@
 
 <table>
   <thead>
-    <tr><th>Gambar</th><th>Judul</th><th>Kategori</th><th>Lokasi</th><th>Tanggal</th><th>Aksi</th></tr>
+    <tr>
+      <th>Gambar</th>
+      <th>Judul</th>
+      <th>Kategori</th>
+      <th>Lokasi</th>
+      <th>Tanggal</th>
+      <th>Aksi</th>
+    </tr>
   </thead>
+
   <tbody>
     <% if (stories.length === 0) { %>
-      <tr><td colspan="6">Belum ada cerita.</td></tr>
+      <tr>
+        <td colspan="6">Belum ada cerita.</td>
+      </tr>
     <% } %>
+
     <% stories.forEach(s => { %>
       <tr>
-        <td><% if (s.image) { %><img src="/uploads/<%= s.image %>" alt=""><% } %></td>
-        <td><a href="/story/<%= s.slug %>" target="_blank"><%= s.title %></a></td>
+        <td>
+          <% if (s.image) { %>
+            <img
+              src="<%= s.imageUrl || (s.image.startsWith('http') ? s.image : '/uploads/' + s.image) %>"
+              alt=""
+              loading="lazy"
+            >
+          <% } %>
+        </td>
+
+        <td>
+          <a
+            href="/story/<%= s.slug %>"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <%= s.title %>
+          </a>
+        </td>
+
         <td><%= s.category_name %></td>
         <td><%= s.location_name || '-' %></td>
         <td><%= new Date(s.published_at).toLocaleDateString('id-ID') %></td>
+
         <td>
-          <a href="<%= adminPath %>/stories/<%= s.id %>/edit" class="btn">Edit</a>
-          <form action="<%= adminPath %>/stories/<%= s.id %>/delete" method="POST" class="inline"
-                onsubmit="return confirm('Hapus cerita ini?')">
-            <button type="submit" class="btn btn-danger">Hapus</button>
+          <a href="<%= adminPath %>/stories/<%= s.id %>/edit" class="btn">
+            Edit
+          </a>
+
+          <form
+            action="<%= adminPath %>/stories/<%= s.id %>/delete"
+            method="POST"
+            class="inline"
+            onsubmit="return confirm('Hapus cerita ini?')"
+          >
+            <button type="submit" class="btn btn-danger">
+              Hapus
+            </button>
           </form>
         </td>
       </tr>

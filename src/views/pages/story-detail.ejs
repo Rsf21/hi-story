@@ -15,6 +15,16 @@
   const mins = Math.max(1, Math.ceil(words / 200));
 
   const publishedDate = new Date(story.published_at);
+
+  const image = story.imageUrl || story.image || null;
+
+  const coverImage = !image
+    ? null
+    : /^https?:\/\//i.test(image)
+      ? image
+      : `/uploads/${encodeURIComponent(
+          image.replace(/^\/?uploads\//i, '').split('/').pop()
+        )}`;
 %>
 
 <main>
@@ -49,10 +59,10 @@
 
       </div>
 
-      <% if (story.image) { %>
+      <% if (coverImage) { %>
         <img
           class="story-cover"
-          src="/uploads/<%= story.image %>"
+          src="<%= coverImage %>"
           alt="<%= story.title %>"
         >
       <% } %>

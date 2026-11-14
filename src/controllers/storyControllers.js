@@ -11,15 +11,42 @@ import {
   getAllCategories,
   getCategoryBySlug,
 } from "../../models/categoryModels.js";
+import { getPublicImageUrl } from "../services/supabaseStorage.js";
 
 const PER_PAGE = 9;
+const HOME_PER_PAGE = 12;
 
 const getPage = (req) => {
   const page = parseInt(req.query.page, 10);
   return Number.isInteger(page) && page > 0 ? page : 1;
 };
 
-const HOME_PER_PAGE = 12;
+const resolveImageUrl = (image) => {
+  if (!image) return null;
+
+  if (/^https?:\/\//i.test(image)) {
+    return image;
+  }
+
+  const supabaseImagePattern =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|png|webp)$/i;
+
+  if (supabaseImagePattern.test(image)) {
+    return getPublicImageUrl(image);
+  }
+
+  const filename = image
+    .replace(/^\/?uploads\//i, "")
+    .split("/")
+    .pop();
+
+  return `/uploads/${encodeURIComponent(filename)}`;
+};
+
+const withImageUrl = (story) => ({
+  ...story,
+  image: resolveImageUrl(story.image),
+});
 
 export const showHome = async (req, res, next) => {
   try {
@@ -32,24 +59,25 @@ export const showHome = async (req, res, next) => {
       HOME_PER_PAGE,
       (currentPage - 1) * HOME_PER_PAGE,
     );
+
     const categories = await getAllCategories();
     const isGuestSession = (req) => !req.session.userId && !!req.session.guest;
-    const status = typeof req.query === "string" ? req.query.bookmarks : "";
+    const status = req.query.bookmarks || "";
+
     res.render("pages/home", {
       title: "Hi-Story",
-      stories,
+      stories: stories.map(withImageUrl),
       categories,
       currentPage,
       totalPages,
       isGuest: isGuestSession(req),
       bookmarks: status,
       baseUrl: "/",
-
       ogTitle: "Hi-Story — Jelajahi Sejarah Dunia",
       ogDescription:
         "Jelajahi kisah tokoh, kerajaan, dan peristiwa bersejarah dunia.",
-      ogImage: "https://hai-story.vercel.app/images/og-home.jpg",
-      ogUrl: "https://hai-story.vercel.app/",
+      ogImage: "https://hi-story-tau.vercel.app/images/og-home.jpg",
+      ogUrl: "https://hi-story-tau.vercel.app/",
       ogType: "website",
     });
   } catch (err) {
@@ -60,8 +88,11 @@ export const showHome = async (req, res, next) => {
 export const showByCategory = async (req, res, next) => {
   try {
     const category = await getCategoryBySlug(req.params.slug);
+
     if (!category) {
-      return res.status(404).render("pages/404", { title: "Tidak ditemukan" });
+      return res.status(404).render("pages/404", {
+        title: "Tidak ditemukan",
+      });
     }
 
     const page = getPage(req);
@@ -74,12 +105,13 @@ export const showByCategory = async (req, res, next) => {
       PER_PAGE,
       (currentPage - 1) * PER_PAGE,
     );
+
     const categories = await getAllCategories();
 
     res.render("pages/category", {
       title: category.name,
       category,
-      stories,
+      stories: stories.map(withImageUrl),
       categories,
       currentPage,
       totalPages,
@@ -92,12 +124,17 @@ export const showByCategory = async (req, res, next) => {
 
 export const showStoryDetail = async (req, res, next) => {
   try {
-    const story = await getStoryBySlug(req.params.slug);
-    if (!story) {
-      return res.status(404).render("pages/404", { title: "Tidak ditemukan" });
+    const storyData = await getStoryBySlug(req.params.slug);
+
+    if (!storyData) {
+      return res.status(404).render("pages/404", {
+        title: "Tidak ditemukan",
+      });
     }
 
-    const related = await getRelatedStories(story);
+    const story = withImageUrl(storyData);
+    const relatedData = await getRelatedStories(storyData);
+    const related = relatedData.map(withImageUrl);
 
     const siteUrl = "https://hi-story-tau.vercel.app";
 
@@ -108,19 +145,14 @@ export const showStoryDetail = async (req, res, next) => {
       .trim()
       .slice(0, 200);
 
-    const imageUrl = story.image
-      ? `${siteUrl}/uploads/${encodeURIComponent(story.image)}`
-      : null;
-
     res.render("pages/story-detail", {
       title: story.title,
       story,
       related,
-
       metaDescription: description,
       ogTitle: `${story.title} | Hi-Story`,
       ogDescription: description,
-      ogImage: imageUrl,
+      ogImage: story.image,
       ogUrl: `${siteUrl}/story/${story.slug}`,
       ogType: "article",
     });
@@ -134,10 +166,11 @@ export const searchHandler = async (req, res, next) => {
     const keyword = (req.query.q || "").trim();
     const stories = keyword ? await searchStories(keyword) : [];
     const categories = await getAllCategories();
+
     res.render("pages/search", {
       title: `Cari: ${keyword}`,
       keyword,
-      stories,
+      stories: stories.map(withImageUrl),
       categories,
     });
   } catch (err) {

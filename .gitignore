@@ -14,6 +14,9 @@ node_modules/
 # Logs
 *.log
 
+# Local uploads
+public/uploads/
+
 # OS
 .DS_Store
 Thumbs.db

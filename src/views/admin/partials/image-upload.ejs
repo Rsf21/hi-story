@@ -1,0 +1,86 @@
+
+<script>
+(function () {
+  const form = document.querySelector('form.form');
+  const fileInput = document.getElementById('image-file');
+  const imageInput = document.getElementById('image-path');
+  const status = document.getElementById('image-status');
+
+  if (!form || !fileInput || !imageInput) return;
+
+  const MAX_BYTES = 20 * 1024 * 1024;
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const uploadUrl = '<%= adminPath %>/upload-image';
+
+  form.addEventListener('submit', async (event) => {
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    event.preventDefault();
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      alert('Format gambar harus JPG, PNG, atau WEBP.');
+      return;
+    }
+
+    if (file.size > MAX_BYTES) {
+      alert('Ukuran gambar maksimal 20 MB.');
+      return;
+    }
+
+    const button = form.querySelector('button[type="submit"]');
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = 'Mengunggah gambar...';
+
+    if (status) status.textContent = 'Mengunggah gambar ke Supabase...';
+
+    try {
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contentType: file.type,
+          size: file.size
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal mendapatkan izin upload.');
+      }
+
+      const data = await response.json();
+
+      const uploadResponse = await fetch(data.signedUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type
+        },
+        body: file
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Gagal mengunggah gambar ke Supabase.');
+      }
+
+      imageInput.value = data.path;
+
+      if (status) status.textContent = 'Upload berhasil. Menyimpan cerita...';
+
+      form.submit();
+    } catch (error) {
+      console.error('UPLOAD GAMBAR UTAMA:', error);
+      alert(error.message || 'Upload gambar gagal.');
+
+      if (status) status.textContent = 'Upload gagal.';
+
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  });
+})();
+</script>
