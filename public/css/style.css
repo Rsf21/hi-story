@@ -3006,3 +3006,352 @@ body:has(.globe-page) .site-footer {
   gap: 5px;
   margin: 0;
 }
+
+/* Menu burger */
+.side-menu {
+  width: 340px;
+  padding: 0;
+}
+
+.sm-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.sm-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.sm-close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-right: -0.5rem;
+  color: var(--heading);
+  background: none;
+  border: 0;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sm-close:hover {
+  background: color-mix(in srgb, var(--heading) 7%, transparent);
+}
+.sm-close svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.sm-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
+
+/* Akun */
+.sm-account {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  border-radius: var(--r-md);
+}
+.sm-account > div {
+  min-width: 0;
+}
+.sm-account img,
+.sm-account .ph {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+/* Bookmark saya */
+.sm-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  color: var(--bg);
+  background: var(--heading);
+  border-radius: var(--r-md);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.sm-feature:hover {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+.sm-feature[aria-current="page"] {
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.sm-feature-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: #10161b;
+  background: var(--gold);
+  border-radius: 50%;
+}
+.sm-feature-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.sm-feature-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+.sm-feature-text strong {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.sm-feature-text small {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.sm-count {
+  flex: none;
+  min-width: 1.9rem;
+  padding: 0.15rem 0.55rem;
+  font: 700 0.85rem var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: #10161b;
+  background: var(--gold);
+  border-radius: 999px;
+}
+
+/* Belum login */
+.sm-login {
+  padding: 1rem;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-radius: var(--r-md);
+}
+.sm-login p {
+  margin: 0 0 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.sm-login .side-btn {
+  gap: 0.65rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: #1f1f1f;
+  background: #fff;
+  border: 1px solid #dadce0;
+}
+.sm-login .side-btn:hover {
+  color: #1f1f1f;
+  background: #f4f5f6;
+  border-color: #c6c9cc;
+}
+.sm-login .side-btn svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* Daftar menu */
+.sm-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sm-label {
+  margin: 1rem 0 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sm-label:first-child {
+  margin-top: 0;
+}
+
+.sm-link,
+.sm-group > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  list-style: none;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.sm-link svg,
+.sm-group > summary > svg {
+  flex: none;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+
+.sm-link:hover,
+.sm-group > summary:hover {
+  color: var(--heading);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.sm-link:hover svg,
+.sm-group > summary:hover > svg {
+  color: var(--accent);
+}
+
+.sm-link[aria-current="page"],
+.sm-group.active > summary {
+  font-weight: 600;
+  color: var(--heading);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.sm-link[aria-current="page"] svg,
+.sm-group.active > summary > svg {
+  color: var(--accent);
+}
+
+/* Kategori (lipat) */
+.sm-group > summary::-webkit-details-marker {
+  display: none;
+}
+.sm-group > summary::after {
+  content: "";
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-left: 0.25rem;
+  border: solid var(--muted);
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+.sm-group[open] > summary::after {
+  transform: rotate(-135deg);
+}
+
+.sm-n {
+  margin-left: auto;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.sm-sub {
+  display: flex;
+  flex-direction: column;
+  margin: 0.2rem 0 0.4rem 1.55rem;
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--line);
+}
+.sm-sub a {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  border-radius: var(--r-sm);
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.sm-sub a:hover {
+  color: var(--heading);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.sm-sub a[aria-current="page"] {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* Bagian bawah */
+.sm-foot {
+  margin-top: auto;
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--line);
+}
+.sm-foot form {
+  margin: 0;
+}
+.sm-foot .side-btn {
+  gap: 0.6rem;
+}
+.sm-foot .side-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Muncul bergantian saat menu dibuka */
+.side-menu.open .sm-body > * {
+  animation: sm-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.side-menu.open .sm-body > :nth-child(2) {
+  animation-delay: 0.05s;
+}
+.side-menu.open .sm-body > :nth-child(3) {
+  animation-delay: 0.1s;
+}
+@keyframes sm-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

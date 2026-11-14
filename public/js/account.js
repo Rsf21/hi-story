@@ -4,9 +4,9 @@
   const loggedIn = !!document.getElementById("user-btn");
   const PENDING = "histori-pending-save";
 
-  /* ---------- Menu akun ---------- */
   const userBtn = document.getElementById("user-btn");
   const userMenu = document.getElementById("user-menu");
+
   if (userBtn && userMenu) {
     const set = (v) => {
       userMenu.hidden = !v;
@@ -21,9 +21,9 @@
     });
   }
 
-  /* ---------- Toast ---------- */
   let toast = null;
   let toastTimer = 0;
+
   const say = (msg) => {
     if (!toast) {
       toast = document.createElement("div");
@@ -38,20 +38,24 @@
     toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
   };
 
-  /* ---------- Tombol simpan ---------- */
   const label = (saved) => (saved ? "Hapus dari simpanan" : "Simpan cerita");
 
-  function paint(btn, saved) {
+  const paint = (btn, saved) => {
     btn.classList.toggle("saved", saved);
     btn.setAttribute("aria-pressed", String(saved));
     btn.setAttribute("aria-label", label(saved));
     btn.title = label(saved);
-  }
+  };
 
   const sync = (id, saved) =>
     document
       .querySelectorAll(`.save-btn[data-story="${CSS.escape(String(id))}"]`)
       .forEach((b) => paint(b, saved));
+
+  const bump = (d) =>
+    document.querySelectorAll("[data-bm-count]").forEach((el) => {
+      el.textContent = Math.max(0, (parseInt(el.textContent, 10) || 0) + d);
+    });
 
   const loginUrl = () =>
     "/auth/google?next=" +
@@ -84,9 +88,7 @@
     if (!loggedIn) {
       try {
         sessionStorage.setItem(PENDING, JSON.stringify({ id, t: Date.now() }));
-      } catch (err) {
-        /* abaikan */
-      }
+      } catch (err) {}
       say("Masuk dulu untuk menyimpan cerita");
       setTimeout(() => {
         location.href = loginUrl();
@@ -96,9 +98,12 @@
 
     const want = btn.getAttribute("aria-pressed") !== "true";
     btn.classList.add("busy");
+
     try {
       const saved = await setSaved(id, want);
       sync(id, saved);
+      if (saved === want) bump(saved ? 1 : -1);
+
       if (saved) {
         btn.classList.remove("pop");
         void btn.offsetWidth;
@@ -106,7 +111,6 @@
       }
       say(saved ? "Disimpan ke koleksimu" : "Dihapus dari simpanan");
 
-      // di halaman "Tersimpan", kartu yang dibatalkan ikut hilang
       const grid = document.getElementById("bm-grid");
       if (grid && !saved) {
         const card = btn.closest(".card");
@@ -127,15 +131,12 @@
     }
   });
 
-  /* ---------- Simpan otomatis setelah login ---------- */
   if (loggedIn) {
     let pending = null;
     try {
       pending = JSON.parse(sessionStorage.getItem(PENDING) || "null");
       sessionStorage.removeItem(PENDING);
-    } catch (err) {
-      /* abaikan */
-    }
+    } catch (err) {}
 
     if (pending && Date.now() - pending.t < 10 * 60 * 1000) {
       const b = document.querySelector(
@@ -145,6 +146,7 @@
         setSaved(pending.id, true)
           .then((saved) => {
             sync(pending.id, saved);
+            if (saved) bump(1);
             say("Disimpan ke koleksimu");
           })
           .catch(() => {});
