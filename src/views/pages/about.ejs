@@ -3,26 +3,31 @@
 <%- include('../partials/navbar') %>
 
 <main>
-  <% if (typeof stories !== 'undefined' && stories.length > 0) { %>
+  <% if (stories && stories.length > 0) { %>
     <section class="about-gallery" aria-label="Galeri sejarah">
       <div class="about-gallery-track">
-        <div class="about-gallery-group">
-          <% stories.forEach(story => { %>
-            <% if (story.imageUrl) { %>
-              <img src="<%= story.imageUrl %>" alt="<%= story.title %>" loading="lazy">
-            <% } %>
-          <% }) %>
-        </div>
-
-        <div class="about-gallery-group" aria-hidden="true">
-          <% stories.forEach(story => { %>
-            <% if (story.imageUrl) { %>
-              <img src="<%= story.imageUrl %>" alt="" loading="lazy">
-            <% } %>
-          <% }) %>
-        </div>
+        <% for (let i = 0; i < 2; i++) { %>
+          <div
+            class="about-gallery-group"
+            <%= i === 1 ? 'aria-hidden="true"' : '' %>
+          >
+            <% stories.forEach(story => { %>
+              <img
+                src="<%= story.imageUrl %>"
+                alt="<%= i === 0 ? story.title : '' %>"
+                loading="<%= i === 0 ? 'eager' : 'lazy' %>"
+              >
+            <% }) %>
+          </div>
+        <% } %>
       </div>
     </section>
+
+    <div class="about-founder">
+  <span>Founded & Curated by</span>
+  <h2>Reza Septa Fauziansyah</h2>
+</div>
+
   <% } %>
 
   <div class="page-box">

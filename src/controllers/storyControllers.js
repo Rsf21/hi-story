@@ -6,6 +6,9 @@ import {
   countStories,
   countStoriesByCategory,
   getRelatedStories,
+  getFilteredStories,
+  countFilteredStories,
+  getAllLocations,
 } from "../../models/storyModels.js";
 
 import {
@@ -79,28 +82,65 @@ const createDescription = (content, fallback) => {
 export const showHome = async (req, res, next) => {
   try {
     const page = getPage(req);
-    const total = await countStories();
+
+    const locationValue = req.query.location || "";
+    const yearValue = req.query.year || "";
+    const categorySlug = req.query.category || "";
+
+    const locationId =
+      /^\d+$/.test(locationValue) && Number(locationValue) > 0
+        ? Number(locationValue)
+        : null;
+
+    const parsedYear =
+      yearValue !== "" && /^-?\d+$/.test(yearValue) ? Number(yearValue) : null;
+
+    const year =
+      parsedYear !== null && Number.isSafeInteger(parsedYear)
+        ? parsedYear
+        : null;
+
+    const filters = {
+      locationId,
+      year,
+      categorySlug,
+    };
+
+    const total = await countFilteredStories(filters);
     const totalPages = Math.max(1, Math.ceil(total / HOME_PER_PAGE));
     const currentPage = Math.min(page, totalPages);
 
-    const stories = await getAllStories(
+    const stories = await getFilteredStories(
+      filters,
       HOME_PER_PAGE,
       (currentPage - 1) * HOME_PER_PAGE,
     );
 
     const categories = await getAllCategories();
-    const isGuestSession = (req) => !req.session.userId && !!req.session.guest;
-    const status = req.query.bookmarks || "";
+    const locations = await getAllLocations();
+
+    const isGuest = !req.session.userId && !!req.session.guest;
+
+    const filterQuery = new URLSearchParams();
+
+    if (locationId) filterQuery.set("location", String(locationId));
+    if (year !== null) filterQuery.set("year", String(year));
+    if (categorySlug) filterQuery.set("category", categorySlug);
 
     res.render("pages/home", {
       title: "Hi-Story",
       stories: stories.map(withImageUrl),
       categories,
+      locations,
       currentPage,
       totalPages,
-      isGuest: isGuestSession(req),
-      bookmarks: status,
+      isGuest,
+      bookmarks: req.query.bookmarks || "",
       baseUrl: "/",
+      filterQuery: filterQuery.toString(),
+      selectedLocation: locationId ? String(locationId) : "",
+      selectedYear: year !== null ? String(year) : "",
+      selectedCategory: categorySlug,
       metaDescription:
         "Hi-Story — Jelajahi kisah sejarah, tokoh dunia, kerajaan, dan peristiwa bersejarah.",
       ogTitle: "Hi-Story — Jelajahi Sejarah Dunia",

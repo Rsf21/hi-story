@@ -218,3 +218,103 @@ export const getRelatedStories = async (story, autoCount = 3) => {
   );
   return auto;
 };
+
+export const getAllLocations = async () => {
+  const [rows] = await pool.query(
+    `SELECT id, name
+     FROM locations
+     ORDER BY name ASC`,
+  );
+
+  return rows;
+};
+
+export const getFilteredStories = async (
+  { locationId = null, year = null, categorySlug = "" },
+  limit = 12,
+  offset = 0,
+) => {
+  const conditions = [];
+  const params = [];
+
+  if (locationId) {
+    conditions.push("s.location_id = ?");
+    params.push(locationId);
+  }
+
+  if (year !== null) {
+    conditions.push(`
+      (
+        (s.year_end IS NULL AND s.year_start = ?)
+        OR
+        (s.year_start <= ? AND s.year_end >= ?)
+      )
+    `);
+
+    params.push(year, year, year);
+  }
+
+  if (categorySlug) {
+    conditions.push("c.slug = ?");
+    params.push(categorySlug);
+  }
+
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  const [rows] = await pool.query(
+    `SELECT s.*, c.name AS category_name, c.slug AS category_slug,
+            l.name AS location_name
+     FROM stories s
+     JOIN categories c ON s.category_id = c.id
+     LEFT JOIN locations l ON s.location_id = l.id
+     ${where}
+     ORDER BY s.published_at DESC
+     LIMIT ? OFFSET ?`,
+    [...params, limit, offset],
+  );
+
+  return rows;
+};
+
+export const countFilteredStories = async ({
+  locationId = null,
+  year = null,
+  categorySlug = "",
+}) => {
+  const conditions = [];
+  const params = [];
+
+  if (locationId) {
+    conditions.push("s.location_id = ?");
+    params.push(locationId);
+  }
+
+  if (year !== null) {
+    conditions.push(`
+      (
+        (s.year_end IS NULL AND s.year_start = ?)
+        OR
+        (s.year_start <= ? AND s.year_end >= ?)
+      )
+    `);
+
+    params.push(year, year, year);
+  }
+
+  if (categorySlug) {
+    conditions.push("c.slug = ?");
+    params.push(categorySlug);
+  }
+
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  const [rows] = await pool.query(
+    `SELECT COUNT(*) AS total
+     FROM stories s
+     JOIN categories c ON s.category_id = c.id
+     ${where}`,
+    params,
+  );
+
+  return rows[0].total;
+};
