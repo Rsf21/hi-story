@@ -1,40 +1,97 @@
+
+<%
+  const footerGallery = typeof footerStories !== 'undefined'
+    ? footerStories
+    : (typeof stories !== 'undefined' ? stories : []);
+
+  const galleryImages = footerGallery.filter(story => story.imageUrl);
+%>
+
 <footer class="site-footer">
+
+  <% if (galleryImages.length > 0) { %>
+    <section class="footer-gallery" aria-label="Galeri cerita Hi-Story">
+      <div class="footer-gallery-track">
+
+        <% for (let i = 0; i < 2; i++) { %>
+          <div
+            class="footer-gallery-group"
+            <%= i === 1 ? 'aria-hidden="true"' : '' %>
+          >
+
+            <% galleryImages.forEach(story => { %>
+              <div class="footer-gallery-card">
+                <img
+                  src="<%= story.imageUrl %>"
+                  alt="<%= i === 0 ? story.title : '' %>"
+                  loading="lazy"
+                >
+              </div>
+            <% }) %>
+
+          </div>
+        <% } %>
+
+      </div>
+    </section>
+  <% } %>
+
   <div class="container">
 
     <div class="founder-info">
-  <strong>Founded By</strong>
-  <span>Reza Septa Fauziansyah</span>
-</div>
+      <strong>Founded By</strong>
+      <span>Reza Septa Fauziansyah</span>
+    </div>
 
     <div class="footer-socials">
-      <a href="https://wa.me/6281234567890" target="_blank"
-         rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+
+      <a
+        href="https://wa.me/6281234567890"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp"
+        title="WhatsApp"
+      >
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
           <path d="M20.52 3.48A11.78 11.78 0 0 0 12.13 0C5.57 0 .23 5.34.23 11.9c0 2.1.55 4.15 1.6 5.96L.12 24l6.3-1.65a11.9 11.9 0 0 0 5.7 1.45h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.51-8.42ZM12.13 21.8a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.74.98 1-3.65-.23-.38a9.86 9.86 0 0 1-1.52-5.25c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.9 7c0 5.46-4.44 9.9-9.89 9.9Z"/>
           <path d="M17.56 14.39c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.8-1.48-1.78-1.65-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.08-.15-.67-1.62-.92-2.22-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.08-.8.38-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.5 1.7.64.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"/>
         </svg>
       </a>
 
-      <a href="https://www.instagram.com/jason_ibrahim/" target="_blank"
-         rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+      <a
+        href="https://www.instagram.com/jason_ibrahim/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+        title="Instagram"
+      >
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
           <path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.5-3.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/>
         </svg>
       </a>
 
-      <a href="rezasepta210@gmail.com"
-         aria-label="Gmail" title="Gmail">
+      <a
+        href="mailto:rezasepta210@gmail.com"
+        aria-label="Gmail"
+        title="Gmail"
+      >
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
           <path d="M1.5 6.8A2.8 2.8 0 0 1 4.3 4h15.4a2.8 2.8 0 0 1 2.8 2.8v10.4a2.8 2.8 0 0 1-2.8 2.8H4.3a2.8 2.8 0 0 1-2.8-2.8V6.8Zm2.1-.4v.3l8.4 6.5 8.4-6.5v-.3a.7.7 0 0 0-.7-.7H4.3a.7.7 0 0 0-.7.7Zm16.8 2.9-7.8 6a1 1 0 0 1-1.2 0l-7.8-6v7.9c0 .4.3.7.7.7h15.4c.4 0 .7-.3.7-.7V9.3Z"/>
         </svg>
       </a>
 
-      <a href="https://github.com/Rsf21" target="_blank"
-         rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+      <a
+        href="https://github.com/Rsf21"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+        title="GitHub"
+      >
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
           <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.53v-2.08c-3.1.68-3.76-1.32-3.76-1.32-.5-1.3-1.24-1.65-1.24-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.48-.28-5.09-1.24-5.09-5.53 0-1.22.44-2.21 1.16-2.99-.12-.28-.5-1.42.11-2.95 0 0 .95-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.1-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.16 1.77 1.16 2.99 0 4.3-2.61 5.25-5.1 5.53.4.35.76 1.03.76 2.08V22c0 .29.2.63.77.52A11.1 11.1 0 0 0 12 .9Z"/>
         </svg>
       </a>
+
     </div>
 
     <p class="footer-copyright">
