@@ -3377,3 +3377,72 @@ body:has(.globe-page) .site-footer {
     margin-inline: auto;
   }
 }
+
+.about-gallery {
+  width: 100%;
+  overflow: hidden;
+  margin: 2rem 0 3rem;
+  position: relative;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+}
+
+.about-gallery-track {
+  display: flex;
+  width: max-content;
+  animation: about-gallery-scroll 90s linear infinite;
+  will-change: transform;
+}
+
+.about-gallery-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1rem;
+  padding-right: 1rem;
+}
+
+.about-gallery-group img {
+  display: block;
+  width: 220px;
+  height: 145px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.about-gallery:hover .about-gallery-track {
+  animation-play-state: paused;
+}
+
+@keyframes about-gallery-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 600px) {
+  .about-gallery-group img {
+    width: 165px;
+    height: 115px;
+  }
+
+  .about-gallery {
+    margin: 1.5rem 0 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-gallery-track {
+    animation: none;
+  }
+}

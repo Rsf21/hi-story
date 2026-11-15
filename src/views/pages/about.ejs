@@ -1,7 +1,30 @@
+
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
 <main>
+  <% if (typeof stories !== 'undefined' && stories.length > 0) { %>
+    <section class="about-gallery" aria-label="Galeri sejarah">
+      <div class="about-gallery-track">
+        <div class="about-gallery-group">
+          <% stories.forEach(story => { %>
+            <% if (story.imageUrl) { %>
+              <img src="<%= story.imageUrl %>" alt="<%= story.title %>" loading="lazy">
+            <% } %>
+          <% }) %>
+        </div>
+
+        <div class="about-gallery-group" aria-hidden="true">
+          <% stories.forEach(story => { %>
+            <% if (story.imageUrl) { %>
+              <img src="<%= story.imageUrl %>" alt="" loading="lazy">
+            <% } %>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
   <div class="page-box">
     <h1>Tentang Hi-Story</h1>
 
@@ -9,7 +32,7 @@
       Hi-Story merupakan platform digital yang menyajikan beragam informasi
       mengenai sejarah peradaban dan peristiwa dunia di masa lampau. Platform ini menjadi ruang untuk
       mengenal berbagai kisah masa lalu sekaligus memahami hubungan antara
-      manusia dan sejarah
+      manusia dan sejarah.
     </p>
 
     <p>
