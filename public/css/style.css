@@ -883,9 +883,13 @@ main > article:not(.story) p {
 }
 
 .story-cover {
-  width: 200px;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  max-height: 420px;
+  object-fit: contain;
+  object-position: center;
   border-radius: var(--r-md);
 }
 
@@ -2331,9 +2335,14 @@ body:has(.globe-page) .site-footer {
   }
 
   .story-head {
-    grid-template-columns: 1fr;
-    gap: 1.1rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+    align-items: center;
+    gap: 1.75rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--line);
   }
+
   .story-cover {
     width: 100%;
     max-height: 170px;
@@ -3352,5 +3361,19 @@ body:has(.globe-page) .site-footer {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .story-head {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .story-cover {
+    width: 100%;
+    max-width: 100%;
+    max-height: 480px;
+    margin-inline: auto;
   }
 }
