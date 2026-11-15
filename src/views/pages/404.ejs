@@ -1,12 +1,184 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title><%= title %></title>
-</head>
-<body style="font-family: sans-serif; text-align: center; padding: 4rem;">
-  <h1>404</h1>
-  <p>Halaman yang lu cari ga ketemu.</p>
-  <a href="/">Kembali ke beranda</a>
-</body>
-</html>
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main>
+  <section class="nf" aria-labelledby="nf-heading">
+    <div class="nf-text">
+      <p class="eyebrow">Kesalahan 404</p>
+      <h1 id="nf-heading" class="nf-title">Halaman yang <em>kamu cari</em> tidak ada</h1>
+      <p class="nf-lead">Bahkan seorang sarjana Athena dengan kaca pembesarnya belum menemukan halaman yang kamu cari. Mungkin alamatnya salah ketik, atau ceritanya sudah dipindahkan.</p>
+
+      <div class="nf-actions">
+        <a class="btn-link" href="/">Kembali ke beranda</a>
+        <a class="btn-ghost" href="/bumi">Jelajah Bumi</a>
+      </div>
+
+      <% if (typeof categories !== 'undefined' && categories.length) { %>
+        <div class="nf-cats">
+          <p>Atau mulai dari kategori</p>
+          <ul>
+            <% categories.forEach(c => { %>
+              <li><a href="/story/category/<%= c.slug %>"><%= c.name %></a></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="nf-art-wrap">
+      <svg class="nf-art" viewBox="0 0 560 430" role="img" aria-labelledby="nf-art-title nf-art-desc">
+        <title id="nf-art-title">Sarjana Yunani mencari buku yang hilang</title>
+        <desc id="nf-art-desc">Seorang tokoh berjubah Yunani dengan karangan daun laurel memegang kaca pembesar di depan rak buku bertiang yang memiliki satu celah kosong.</desc>
+
+        <defs>
+          <pattern id="nf-key" width="18" height="14" patternUnits="userSpaceOnUse">
+            <path d="M1 12V2h14v8H7V6h4" fill="none" stroke="#a8823f" stroke-width="1.6"/>
+          </pattern>
+          <path id="nf-tunic-shape" d="M366 176C380 168 410 168 424 176L448 338H342Z"/>
+          <clipPath id="nf-tunic-clip"><use href="#nf-tunic-shape"/></clipPath>
+        </defs>
+
+        <circle class="nf-blob" cx="290" cy="215" r="200"/>
+        <ellipse class="nf-ground" cx="280" cy="398" rx="250" ry="11"/>
+
+        <rect class="nf-frame" x="30" y="342" width="278" height="10" rx="2"/>
+        <rect class="nf-inner" x="62" y="100" width="216" height="242"/>
+        <rect class="nf-board" x="62" y="170" width="216" height="5"/>
+        <rect class="nf-board" x="62" y="250" width="216" height="5"/>
+        <rect class="nf-board" x="62" y="330" width="216" height="5"/>
+
+        <rect class="nf-gap" x="211" y="193" width="22" height="57" rx="2"/>
+        <text class="nf-q" x="222" y="235" text-anchor="middle">?</text>
+
+        <g class="bk">
+          <rect class="b1" x="70" y="118" width="16" height="52"/>
+          <rect class="b2" x="86" y="112" width="12" height="58"/>
+          <rect class="b3" x="98" y="122" width="18" height="48"/>
+          <rect class="b4" x="116" y="114" width="14" height="56"/>
+          <rect class="b1" x="130" y="116" width="20" height="54"/>
+          <rect class="b5" x="150" y="112" width="12" height="58"/>
+          <rect class="b2" x="162" y="120" width="16" height="50"/>
+          <rect class="b3" x="178" y="114" width="14" height="56"/>
+          <rect class="b1" x="192" y="118" width="18" height="52"/>
+          <rect class="b4" x="210" y="112" width="12" height="58"/>
+          <rect class="b2" x="222" y="122" width="16" height="48"/>
+          <rect class="b5" x="238" y="116" width="14" height="54"/>
+          <rect class="b3" x="252" y="118" width="18" height="52"/>
+
+          <rect class="b2" x="70" y="196" width="14" height="54"/>
+          <rect class="b1" x="84" y="192" width="18" height="58"/>
+          <rect class="b5" x="102" y="200" width="12" height="50"/>
+          <rect class="b3" x="118" y="194" width="16" height="56"/>
+          <rect class="b4" x="134" y="198" width="16" height="52"/>
+          <rect class="b1" x="150" y="194" width="14" height="56"/>
+          <rect class="b2" x="164" y="200" width="18" height="50"/>
+          <rect class="b5" x="182" y="192" width="12" height="58"/>
+          <rect class="b3" x="194" y="196" width="14" height="54" transform="rotate(9 208 250)"/>
+          <rect class="b4" x="236" y="194" width="14" height="56"/>
+          <rect class="b1" x="250" y="200" width="14" height="50"/>
+          <rect class="b2" x="264" y="196" width="12" height="54"/>
+
+          <rect class="b3" x="70" y="318" width="60" height="12"/>
+          <rect class="b2" x="74" y="306" width="52" height="12"/>
+          <rect class="b1" x="78" y="294" width="46" height="12"/>
+          <rect class="b4" x="138" y="274" width="14" height="56"/>
+          <rect class="b5" x="152" y="280" width="16" height="50"/>
+          <rect class="b2" x="168" y="272" width="12" height="58"/>
+          <rect class="b1" x="180" y="278" width="18" height="52"/>
+          <rect class="b3" x="198" y="272" width="14" height="58"/>
+          <rect class="b4" x="212" y="282" width="16" height="48"/>
+          <rect class="b2" x="228" y="274" width="12" height="56"/>
+          <rect class="b5" x="240" y="280" width="18" height="50"/>
+          <rect class="b1" x="258" y="276" width="12" height="54"/>
+        </g>
+
+        <rect class="nf-frame" x="40" y="100" width="22" height="242"/>
+        <rect class="nf-frame" x="278" y="100" width="22" height="242"/>
+        <path class="nf-flute" d="M47 108V334M51 108V334M55 108V334M285 108V334M289 108V334M293 108V334"/>
+        <rect class="nf-frame" x="36" y="96" width="30" height="8" rx="1.5"/>
+        <rect class="nf-frame" x="274" y="96" width="30" height="8" rx="1.5"/>
+        <rect class="nf-frame" x="36" y="334" width="30" height="8" rx="1.5"/>
+        <rect class="nf-frame" x="274" y="334" width="30" height="8" rx="1.5"/>
+        <path class="nf-frame" d="M28 88 170 26l142 62z"/>
+        <rect class="nf-frame" x="28" y="88" width="284" height="12" rx="2"/>
+        <circle cx="170" cy="68" r="7" fill="none" stroke="#a8823f" stroke-width="1.6"/>
+        <text class="nf-plate" x="170" y="97.5" text-anchor="middle">404</text>
+
+        <g class="nf-person">
+          <rect x="368" y="330" width="13" height="58" rx="5" fill="#e0b88f"/>
+          <rect x="408" y="330" width="13" height="58" rx="5" fill="#d8ae84"/>
+          <path d="M368 362h13M368 372h13M408 362h13M408 372h13" stroke="#7a5230" stroke-width="2" fill="none"/>
+          <rect x="356" y="385" width="30" height="9" rx="4.5" fill="#7a5230"/>
+          <rect x="396" y="385" width="30" height="9" rx="4.5" fill="#7a5230"/>
+
+          <use class="nf-tunic" href="#nf-tunic-shape"/>
+          <path d="M380 250 376 334M400 244 402 334M418 246 430 334" stroke="rgba(0,0,0,.08)" stroke-width="2" fill="none"/>
+          <g clip-path="url(#nf-tunic-clip)">
+            <rect x="336" y="322" width="118" height="16" fill="url(#nf-key)"/>
+            <rect x="336" y="320.5" width="118" height="1.8" fill="#a8823f"/>
+            <rect x="336" y="336.5" width="118" height="1.5" fill="#a8823f"/>
+          </g>
+
+          <path d="M364 180C372 230 410 270 424 322H450C440 262 410 222 392 176Z" fill="#2b6a62"/>
+          <path d="M424 322H450" stroke="#a8823f" stroke-width="3"/>
+          <path d="M358 234Q395 244 434 234" fill="none" stroke="#a8823f" stroke-width="5" stroke-linecap="round"/>
+          <path d="M424 237l5 20" stroke="#a8823f" stroke-width="3" stroke-linecap="round"/>
+
+          <path d="M424 186Q442 214 437 248" fill="none" stroke="#d8ae84" stroke-width="12" stroke-linecap="round"/>
+          <circle cx="437" cy="252" r="7" fill="#d8ae84"/>
+          <circle cx="424" cy="186" r="12" class="nf-tunic"/>
+
+          <rect x="388" y="158" width="14" height="22" rx="5" fill="#d8ae84"/>
+          <ellipse cx="395" cy="140" rx="23" ry="26" fill="#ecc7a3"/>
+          <circle cx="419" cy="124" r="11" fill="#3a2a20"/>
+          <path d="M372 134C370 110 392 106 410 114C424 121 422 146 417 158C415 144 409 134 399 130C389 127 378 128 372 134Z" fill="#3a2a20"/>
+          <circle cx="409" cy="145" r="5" fill="#d8ae84"/>
+
+          <g fill="#5d8a4c">
+            <ellipse cx="373.2" cy="129.9" rx="6.5" ry="2.8" transform="rotate(-65 373.2 129.9)"/>
+            <ellipse cx="379.6" cy="121.6" rx="6.5" ry="2.8" transform="rotate(-40 379.6 121.6)"/>
+            <ellipse cx="388.8" cy="116.8" rx="6.5" ry="2.8" transform="rotate(-15 388.8 116.8)"/>
+            <ellipse cx="399.2" cy="116.4" rx="6.5" ry="2.8" transform="rotate(10 399.2 116.4)"/>
+            <ellipse cx="408.8" cy="120.3" rx="6.5" ry="2.8" transform="rotate(35 408.8 120.3)"/>
+            <ellipse cx="415.8" cy="128" rx="6.5" ry="2.8" transform="rotate(60 415.8 128)"/>
+          </g>
+          <g fill="#a8823f">
+            <circle cx="376.1" cy="125.2" r="1.8"/>
+            <circle cx="394" cy="116" r="1.8"/>
+            <circle cx="412.8" cy="123.9" r="1.8"/>
+          </g>
+
+          <circle cx="383" cy="141" r="2.7" fill="#2b2118"/>
+          <path d="M376 132Q383 127 391 131" fill="none" stroke="#3a2a20" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M372 145Q367 151 373 154" fill="none" stroke="#c99a74" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="381" cy="159" rx="2.6" ry="3.2" fill="#8a4a43"/>
+          <circle cx="388" cy="152" r="5" fill="#e59a8a" opacity=".3"/>
+
+          <g class="nf-arm">
+            <path d="M258 232L340 257" stroke="#6b4a2a" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M258 232l10 3" stroke="#b18a4b" stroke-width="9" stroke-linecap="round" fill="none"/>
+            <circle class="nf-glass" cx="222" cy="221" r="31"/>
+            <circle class="nf-ring" cx="222" cy="221" r="34"/>
+            <path class="nf-glint" d="M203 208a23 23 0 0 1 13-9"/>
+            <path d="M368 192Q338 208 324 249" fill="none" stroke="#ecc7a3" stroke-width="13" stroke-linecap="round"/>
+            <circle cx="322" cy="251" r="8.5" fill="#ecc7a3"/>
+          </g>
+          <circle cx="366" cy="190" r="13" class="nf-tunic"/>
+        </g>
+
+        <g>
+          <circle class="nf-mote" cx="188" cy="262" r="2"/>
+          <circle class="nf-mote" cx="246" cy="238" r="1.6" style="animation-delay:-2s"/>
+          <circle class="nf-mote" cx="206" cy="186" r="1.4" style="animation-delay:-4s"/>
+          <circle class="nf-mote" cx="262" cy="214" r="1.8" style="animation-delay:-1s"/>
+        </g>
+
+        <text class="nf-qm nf-float" x="452" y="104" font-size="38">?</text>
+        <text class="nf-qm nf-float" x="486" y="150" font-size="24" style="animation-delay:-1.2s">?</text>
+        <text class="nf-qm nf-float" x="352" y="92" font-size="22" style="animation-delay:-2.1s">?</text>
+      </svg>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
