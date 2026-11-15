@@ -8,6 +8,8 @@ import { fileURLToPath } from "url";
 import pool from "./src/config/database.js";
 import { getAllCategories } from "./models/categoryModels.js";
 import { getBookmarkedIds } from "./models/bookmarkModels.js";
+import { getAllStories } from "./models/storyModels.js";
+import { resolveImageUrl } from "./src/controllers/storyControllers.js";
 
 import indexRoutes from "./src/routes/indexRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
@@ -70,6 +72,29 @@ app.use(async (req, res, next) => {
 app.use(async (req, res, next) => {
   try {
     res.locals.categories = await getAllCategories();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.use(async (req, res, next) => {
+  try {
+    const currentPath = req.path.replace(/\/+$/, "") || "/";
+
+    if (currentPath === "/about") {
+      res.locals.footerStories = [];
+      return next();
+    }
+    const stories = await getAllStories(12, 0);
+
+    res.locals.footerStories = stories
+      .filter((story) => story.image)
+      .map((story) => ({
+        ...story,
+        imageUrl: resolveImageUrl(story.image),
+      }));
+
     next();
   } catch (error) {
     next(error);

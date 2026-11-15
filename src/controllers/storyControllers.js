@@ -29,7 +29,7 @@ const getPage = (req) => {
   return Number.isInteger(page) && page > 0 ? page : 1;
 };
 
-const resolveImageUrl = (image) => {
+export const resolveImageUrl = (image) => {
   if (!image) return null;
 
   let value = String(image).trim();
