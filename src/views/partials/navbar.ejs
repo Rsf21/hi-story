@@ -5,7 +5,6 @@
   const isOn = (p) => (p === '/' ? pathOnly === '/' : pathOnly === p || pathOnly.startsWith(p + '/'));
   const savedCount = typeof savedIds !== 'undefined' ? savedIds.length : 0;
   const cats = typeof categories !== 'undefined' ? categories : [];
-  const onCategory = cats.some((c) => isOn('/story/category/' + c.slug));
 %>
 
 <header class="site-header">
@@ -30,8 +29,8 @@
       <a href="/tentang">Tentang</a>
       <a href="/kontak">Kontak</a>
       <a href="/faq">FAQ</a>
-      <a href="/mybookmarks">bookmarks</a>
-      <a href="https://saweria.co/HiStory26">Dukungan</a>
+      <a href="/mybookmarks">Bookmark</a>
+      <a href="https://saweria.co/HiStory26" target="_blank" rel="noopener noreferrer">Dukungan</a>
     </nav>
 
     <div class="nav-tools">
@@ -100,169 +99,28 @@
 <div class="overlay" id="overlay"></div>
 
 <aside class="side-menu" id="side-menu" aria-hidden="true" aria-label="Menu">
-  <div class="sm-inner">
-    <div class="sm-head">
-      <a href="/" class="brand" translate="no">Hi-Story</a>
-      <button type="button" id="menu-close" class="sm-close" aria-label="Tutup menu">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <div class="sm-body">
-      <% if (u) { %>
-        <div class="sm-account">
-          <% if (u.avatar) { %>
-            <img src="<%= u.avatar %>" alt="" referrerpolicy="no-referrer">
-          <% } else { %>
-            <span class="ph notranslate" translate="no"><%= u.name.charAt(0).toUpperCase() %></span>
-          <% } %>
-          <div>
-            <span class="um-name notranslate" translate="no"><%= u.name %></span>
-            <span class="um-mail notranslate" translate="no"><%= u.email %></span>
-          </div>
-        </div>
-
-        <a class="sm-feature" href="/mybookmarks" <%- isOn('/mybookmarks') ? 'aria-current="page"' : '' %>>
-          <span class="sm-feature-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
-          </span>
-          <span class="sm-feature-text">
-            <strong>Bookmark saya</strong>
-            <small>Cerita yang kamu simpan</small>
-          </span>
-          <span class="sm-count" data-bm-count><%= savedCount %></span>
-        </a>
-      <% } else { %>
-        <div class="sm-login">
-          <p>Masuk untuk menyimpan cerita dan membukanya kembali kapan saja.</p>
-          <a class="side-btn" href="/auth/google?next=<%= encodeURIComponent(here) %>">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4C18 1.2 15.2 0 12 0 7.3 0 3.3 2.7 1.3 6.6l4 3.1C6.2 6.9 8.9 4.8 12 4.8z"/></svg>
-            Masuk dengan Google
-          </a>
-        </div>
-      <% } %>
-
-      <nav class="sm-nav" aria-label="Menu utama">
-        <p class="sm-label">Jelajahi</p>
-
-        <a class="sm-link" href="/" <%- isOn('/') ? 'aria-current="page"' : '' %>>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 9.5V21h14V9.5"/></svg>
-          Beranda
-        </a>
-        <a class="sm-link" href="/bumi" <%- isOn('/bumi') ? 'aria-current="page"' : '' %>>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
-          Jelajah Bumi
-        </a>
-
-        <% if (cats.length) { %>
-          <details class="sm-group<%= onCategory ? ' active' : '' %>" <%= onCategory ? 'open' : '' %>>
-            <summary>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-              Kategori
-              <span class="sm-n"><%= cats.length %></span>
-            </summary>
-            <div class="sm-sub">
-              <% cats.forEach(cat => { %>
-                <a href="/story/category/<%= cat.slug %>" <%- isOn('/story/category/' + cat.slug) ? 'aria-current="page"' : '' %>><%= cat.name %></a>
-              <% }) %>
-            </div>
-          </details>
-        <% } %>
-
-        <p class="sm-label">Info</p>
-
-        <a class="sm-link" href="/tentang" <%- isOn('/tentang') ? 'aria-current="page"' : '' %>>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          Tentang Hi-Story
-        </a>
-        <a class="sm-link" href="/mybookmarks"<%- isOn('/mybookmarks') ? 'aria-current="page"' : '' %>>
-           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
-          bookmarks
-        </a>
-        <a class="sm-link" href="/kontak" <%- isOn('/kontak') ? 'aria-current="page"' : '' %>>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-          Kontak
-        </a>
-
-        <a class="sm-link" href="/faq" <%- isOn('/faq') ? 'aria-current="page"' : '' %>>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4M12 17h.01"/></svg>
-          FAQ
-        </a>
-
-        <a class="sm-link" href="https://saweria.co/HiStory26" target="_blank" rel="noopener noreferrer">
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M12 21s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.5-8 11-8 11z"/>
-  </svg>
-  Dukung Hi-Story
-</a>
-      </nav>
-    </div>
-
+  <div class="mm">
     <% if (u) { %>
-      <div class="sm-foot">
+      <div class="mm-user">
+        <% if (u.avatar) { %>
+          <img src="<%= u.avatar %>" alt="" referrerpolicy="no-referrer">
+        <% } else { %>
+          <span class="ph notranslate" translate="no"><%= u.name.charAt(0).toUpperCase() %></span>
+        <% } %>
+        <div class="mm-user-text">
+          <span class="um-name notranslate" translate="no"><%= u.name %></span>
+          <span class="um-mail notranslate" translate="no"><%= u.email %></span>
+        </div>
         <form action="/auth/logout" method="POST">
           <input type="hidden" name="next" value="<%= here %>">
-          <button type="submit" class="side-btn ghost">
+          <button type="submit" class="mm-logout">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
             Keluar
           </button>
         </form>
       </div>
-    <% } %>
-  </div>
-</aside>
-
-<script>
-  (function () {
-    var burger = document.getElementById('burger');
-    var menu = document.getElementById('side-menu');
-    var overlay = document.getElementById('overlay');
-    var closeBtn = document.getElementById('menu-close');
-    var themeBtn = document.getElementById('theme-toggle');
-    var root = document.documentElement;
-
-    function setOpen(open) {
-      menu.classList.toggle('open', open);
-      overlay.classList.toggle('show', open);
-      burger.setAttribute('aria-expanded', open);
-      menu.setAttribute('aria-hidden', !open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    }
-
-    burger.addEventListener('click', function () { setOpen(true); });
-    closeBtn.addEventListener('click', function () { setOpen(false); });
-    overlay.addEventListener('click', function () { setOpen(false); });
-
-    var desktop = window.matchMedia('(min-width: 900px)');
-    var onResize = function (e) { if (e.matches) setOpen(false); };
-    if (desktop.addEventListener) desktop.addEventListener('change', onResize);
-    else desktop.addListener(onResize);
-
-    function closeDropdowns() {
-      document.querySelectorAll('.dropdown[open]').forEach(function (d) { d.removeAttribute('open'); });
-    }
-
-    document.addEventListener('click', function (e) {
-      document.querySelectorAll('.dropdown[open]').forEach(function (d) {
-        if (!d.contains(e.target)) d.removeAttribute('open');
-      });
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { setOpen(false); closeDropdowns(); }
-    });
-
-    function syncTheme() {
-      themeBtn.setAttribute('aria-pressed', root.getAttribute('data-theme') === 'dark');
-    }
-
-    themeBtn.addEventListener('click', function () {
-      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('histori-theme', next); } catch (e) {}
-      syncTheme();
-    });
-
-    syncTheme();
-  })();
-</script>
+    <% } else { %>
+      <div class="mm-login">
+        <p>Masuk untuk menyimpan cerita dan membukanya kembali kapan saja.</p>
+        <a class="mm-google" href="/auth/google?next=<%= encodeURIComponent(here) %>">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12
