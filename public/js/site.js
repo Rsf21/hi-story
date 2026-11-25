@@ -5,7 +5,6 @@
   root.dataset.ready = "1";
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- Muncul pelan saat di-scroll ---------- */
   const TARGETS =
     ".section-head, .card, .story-head, " +
     ".story-content > :is(h1, h2, h3, p, blockquote, ul, ol), " +

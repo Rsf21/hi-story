@@ -14,90 +14,325 @@
 
   const mins = Math.max(1, Math.ceil(words / 200));
 
-  const publishedDate = new Date(story.published_at);
+  const publishedDate = story.published_at
+    ? new Date(story.published_at).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      })
+    : '';
 
-  const image = story.imageUrl || story.image || null;
-
-  const coverImage = !image
-    ? null
-    : /^https?:\/\//i.test(image)
-      ? image
-      : `/uploads/${encodeURIComponent(
-          image.replace(/^\/?uploads\//i, '').split('/').pop()
-        )}`;
+  const image = story.imageUrl || story.image || '';
+  const coverImage = image || '/images/default-story.jpg';
 %>
 
-<main>
-  <article class="story">
+<main class="story-page">
+  <div class="story-container">
 
     <header class="story-head">
-
-      <div class="story-head-text">
-
-        <a
-          class="tag"
-          href="/story/category/<%= story.category_slug %>"
-        >
-          <%= story.category_name %>
-        </a>
-
-        <h1><%= story.title %></h1>
-
-        <p class="story-meta">
-
-          <time datetime="<%= publishedDate.toISOString() %>">
-            <%= publishedDate.toLocaleDateString('id-ID', {
-              dateStyle: 'long'
-            }) %>
-          </time>
-
-          <span aria-hidden="true">&middot;</span>
-
-          <span><%= mins %> menit baca</span>
-
-        </p>
-
+      <div class="story-breadcrumb">
+        <a href="/">Beranda</a>
+        <span>/</span>
+        <span>Artikel</span>
       </div>
 
-      <% if (coverImage) { %>
+      <h1 class="story-title"><%= story.title %></h1>
+
+      <div class="story-meta">
+        <% if (publishedDate) { %>
+          <span><%= publishedDate %></span>
+        <% } %>
+
+        <span><%= mins %> menit membaca</span>
+      </div>
+
+      <figure class="story-cover">
         <img
-          class="story-cover"
           src="<%= coverImage %>"
           alt="<%= story.title %>"
+          loading="eager"
         >
-      <% } %>
-
+      </figure>
     </header>
 
-    <div class="story-content">
-      <%- content
-        .replace(/&nbsp;|\u00a0/g, ' ')
-        .replace(/<p>\s*#\s*<\/p>/g, '<hr>')
-      %>
+    <div class="story-layout">
+
+      <article class="story-article">
+        <div class="story-content" id="story-content">
+          <%- content %>
+        </div>
+
+        <div class="story-end">
+          <span>— Akhir Artikel —</span>
+        </div>
+      </article>
+
+      <aside
+        class="story-toc collapsed"
+        id="story-toc"
+        aria-label="Daftar isi artikel"
+      >
+        <button
+          type="button"
+          class="story-toc-toggle"
+          id="story-toc-toggle"
+          aria-expanded="false"
+          aria-controls="story-toc-content"
+        >
+          <span class="story-toc-heading">
+            <span class="story-toc-title">Daftar Bab</span>
+            <span class="story-toc-count" id="story-toc-count">0</span>
+          </span>
+
+          <svg
+            class="story-toc-arrow"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+  d="M15 18L9 12L15 6"
+  stroke="currentColor"
+  stroke-width="2.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+/>
+          </svg>
+        </button>
+
+        <div
+          class="story-toc-content"
+          id="story-toc-content"
+          style="display: none;"
+        >
+          <nav
+            class="story-toc-list"
+            id="story-toc-list"
+            aria-label="Navigasi bab"
+          >
+            <p class="story-toc-empty">Memuat daftar bab...</p>
+          </nav>
+        </div>
+      </aside>
+
     </div>
 
-  </article>
-
-  <% if (typeof related !== 'undefined' && related.length > 0) { %>
-
-    <section class="related" id="related">
-
-      <h2>Baca juga</h2>
-
-      <div class="grid">
-
-        <% related.forEach(r => { %>
-
-          <%- include('../partials/card', { story: r }) %>
-
-        <% }) %>
-
-      </div>
-
-    </section>
-
-  <% } %>
-
+  </div>
 </main>
+
+<script>
+(() => {
+  'use strict';
+
+  const toc = document.getElementById('story-toc');
+  const tocToggle = document.getElementById('story-toc-toggle');
+  const tocContent = document.getElementById('story-toc-content');
+  const tocList = document.getElementById('story-toc-list');
+  const tocCount = document.getElementById('story-toc-count');
+  const articleContent = document.getElementById('story-content');
+
+  if (
+    !toc ||
+    !tocToggle ||
+    !tocContent ||
+    !tocList ||
+    !tocCount ||
+    !articleContent
+  ) {
+    return;
+  }
+
+  const mobileQuery = window.matchMedia('(max-width: 900px)');
+
+ const headings = Array.from(
+  articleContent.querySelectorAll('h1, h2, h3, h4')
+);
+
+  const boldParagraphs = Array.from(
+    articleContent.querySelectorAll('p')
+  ).filter((paragraph) => {
+    if (paragraph.closest('blockquote, li, figure, table')) {
+      return false;
+    }
+
+    if (paragraph.querySelector('img, video, iframe')) {
+      return false;
+    }
+
+    const text = paragraph.textContent.trim();
+
+    if (!text || text.length > 120) {
+      return false;
+    }
+
+    const strong = paragraph.querySelector('strong, b');
+
+    if (!strong) {
+      return false;
+    }
+
+    const strongText = strong.textContent.trim();
+
+    return (
+      strongText.length >= 3 &&
+      strongText.length >= text.length * 0.7
+    );
+  });
+
+  const allHeadings = [
+    ...headings,
+    ...boldParagraphs
+  ].sort((a, b) => {
+    const position = a.compareDocumentPosition(b);
+
+    if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+      return -1;
+    }
+
+    if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+      return 1;
+    }
+
+    return 0;
+  });
+
+  const uniqueHeadings = [...new Set(allHeadings)];
+  const headingElements = [];
+
+  tocList.innerHTML = '';
+
+  if (uniqueHeadings.length === 0) {
+    tocList.innerHTML =
+      '<p class="story-toc-empty">Belum ada daftar bab.</p>';
+
+    tocCount.textContent = '0';
+  } else {
+    uniqueHeadings.forEach((heading, index) => {
+      const title = heading.textContent.trim();
+
+      if (!title) return;
+
+      heading.classList.add('story-section-heading');
+
+      const link = document.createElement('a');
+
+      link.href = '#';
+      link.className = 'story-toc-link';
+      link.textContent = title;
+      link.dataset.headingIndex = String(headingElements.length);
+
+      const level = /^H[3-4]$/.test(heading.tagName)
+        ? Number(heading.tagName.substring(1))
+        : 2;
+
+      link.classList.add(`story-toc-level-${level}`);
+
+      headingElements.push(heading);
+      tocList.appendChild(link);
+    });
+
+    tocCount.textContent = String(headingElements.length);
+  }
+
+  const closeToc = () => {
+    toc.classList.add('collapsed');
+    tocContent.style.display = 'none';
+    tocToggle.setAttribute('aria-expanded', 'false');
+  };
+
+  const openToc = () => {
+    toc.classList.remove('collapsed');
+    tocContent.style.display = 'grid';
+    tocToggle.setAttribute('aria-expanded', 'true');
+  };
+
+  tocToggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const isOpen =
+      tocToggle.getAttribute('aria-expanded') === 'true';
+
+    if (isOpen) {
+      closeToc();
+    } else {
+      openToc();
+    }
+  });
+
+  tocList.addEventListener('click', (event) => {
+    const link = event.target.closest('.story-toc-link');
+
+    if (!link) return;
+
+    event.preventDefault();
+
+    const index = Number(link.dataset.headingIndex);
+    const target = headingElements[index];
+
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+    if (target.id) {
+      history.replaceState(null, '', `#${target.id}`);
+    }
+
+    if (mobileQuery.matches) {
+      closeToc();
+    }
+  });
+
+  const updateTocLayout = () => {
+    if (mobileQuery.matches) {
+      closeToc();
+    } else {
+      openToc();
+    }
+  };
+
+  updateTocLayout();
+
+  if (mobileQuery.addEventListener) {
+    mobileQuery.addEventListener('change', updateTocLayout);
+  } else {
+    mobileQuery.addListener(updateTocLayout);
+  }
+
+  if (
+    'IntersectionObserver' in window &&
+    headingElements.length > 0
+  ) {
+    const links = tocList.querySelectorAll('.story-toc-link');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        const index = headingElements.indexOf(entry.target);
+
+        links.forEach((link) => {
+          link.classList.toggle(
+            'active',
+            Number(link.dataset.headingIndex) === index
+          );
+        });
+      });
+    }, {
+      rootMargin: '-15% 0px -75% 0px',
+      threshold: 0
+    });
+
+    headingElements.forEach((heading) => {
+      observer.observe(heading);
+    });
+  }
+})();
+</script>
 
 <%- include('../partials/footer') %>
