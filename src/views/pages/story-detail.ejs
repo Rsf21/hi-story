@@ -93,12 +93,12 @@
             aria-hidden="true"
           >
             <path
-  d="M15 18L9 12L15 6"
-  stroke="currentColor"
-  stroke-width="2.5"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-/>
+              d="M15 18L9 12L15 6"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </button>
 
@@ -118,6 +118,38 @@
       </aside>
 
     </div>
+
+    <% if (related && related.length > 0) { %>
+      <section class="related">
+        <h2>Baca Juga</h2>
+
+        <div class="grid">
+          <% related.forEach((item) => { %>
+            <a
+              href="/story/<%= item.slug %>"
+              class="card"
+              aria-label="Baca <%= item.title %>"
+            >
+              <% if (item.imageUrl || item.image) { %>
+                <img
+                  src="<%= item.imageUrl || item.image %>"
+                  alt="<%= item.title %>"
+                  loading="lazy"
+                >
+              <% } else { %>
+                <div class="card-noimg">
+                  <%= item.title ? item.title.charAt(0) : '?' %>
+                </div>
+              <% } %>
+
+              <div class="card-body">
+                <h2><%= item.title %></h2>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      </section>
+    <% } %>
 
   </div>
 </main>
@@ -146,9 +178,9 @@
 
   const mobileQuery = window.matchMedia('(max-width: 900px)');
 
- const headings = Array.from(
-  articleContent.querySelectorAll('h1, h2, h3, h4')
-);
+  const headings = Array.from(
+    articleContent.querySelectorAll('h1, h2, h3, h4')
+  );
 
   const boldParagraphs = Array.from(
     articleContent.querySelectorAll('p')
@@ -209,7 +241,7 @@
 
     tocCount.textContent = '0';
   } else {
-    uniqueHeadings.forEach((heading, index) => {
+    uniqueHeadings.forEach((heading) => {
       const title = heading.textContent.trim();
 
       if (!title) return;

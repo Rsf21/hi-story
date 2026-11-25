@@ -34,29 +34,34 @@
   --measure: 42rem;
   --header-h: 68px;
 }
-
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b1115;
-  --surface: #121b21;
-  --text: #cfd3d0;
-  --reading: #e6e3db;
-  --heading: #f2efe8;
-  --muted: #95a0a5;
-  --line: #233039;
-  --accent: #7cc2b7;
-  --accent-hover: #a3d8cf;
-  --on-accent: #0a1614;
-  --gold: #cfae70;
-  --rose: #dba198;
-  --nav-bg: rgba(15, 23, 29, 0.92);
-  --nav-text: #eef0ec;
-  --nav-muted: #a3aeb4;
-  --nav-line: #1f2b33;
-  --ink: #070c10;
-  --ink-2: #121c23;
-  --code-bg: #070c10;
-  --shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+
+  --bg: #08090b;
+  --surface: #141619;
+  --text: #ffffff;
+  --reading: #e5e5e5;
+  --heading: #f5f5f5;
+  --muted: #ffffff;
+  --line: rgba(190, 195, 205, 0.13);
+
+  --accent: #aeb8c2;
+  --accent-hover: #000000;
+  --on-accent: #08090b;
+
+  --gold: #c5b28b;
+  --rose: #b98d8d;
+
+  --nav-bg: rgba(8, 9, 11, 0.94);
+  --nav-text: #f0f1f3;
+  --nav-muted: #92969d;
+  --nav-line: rgba(190, 195, 205, 0.12);
+
+  --ink: #050607;
+  --ink-2: #101215;
+  --code-bg: #050607;
+
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
 }
 
 /* Dasar */
@@ -73,6 +78,8 @@ html {
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   margin: 0;
   font-family: var(--f-ui);
   font-size: 1rem;
@@ -81,6 +88,55 @@ body {
   background: var(--bg);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 20% 30%,
+      rgba(135, 133, 133, 0.95) 0%,
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 75% 25%,
+      rgba(46, 47, 48, 0.38) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 65% 75%,
+      rgba(65, 70, 76, 0.13) 0%,
+      transparent 38%
+    ),
+    radial-gradient(ellipse at 15% 85%, rgba(0, 0, 0, 0.75) 0%, transparent 40%);
+
+  animation: silverAtmosphere 32s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes silverAtmosphere {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(2%, 3%, 0) scale(1.04);
+  }
+
+  100% {
+    transform: translate3d(3%, -2%, 0) scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+    transform: none;
+  }
 }
 
 a {
@@ -4879,5 +4935,144 @@ textarea {
     display: block !important;
     max-height: 45vh !important;
     overflow-y: auto !important;
+  }
+}
+
+/* Perbaikan tata letak halaman detail cerita */
+.story-page {
+  width: 100%;
+}
+
+.story-container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.story-head {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding-right: 0 !important;
+  padding-bottom: 1.75rem;
+}
+
+.story-breadcrumb {
+  width: 100%;
+}
+
+.story-title {
+  width: 100%;
+  margin: 0.75rem 0 1rem;
+}
+
+.story-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+}
+
+figure.story-cover {
+  display: block;
+  width: min(100%, 360px);
+  max-width: 360px;
+  height: auto;
+  max-height: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  aspect-ratio: auto;
+  overflow: visible;
+}
+
+figure.story-cover img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  object-fit: contain;
+  object-position: center;
+  border-radius: var(--r-md);
+}
+
+.story-layout {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .story-page {
+    width: calc(100% - 28px);
+  }
+
+  .story-container {
+    width: 100%;
+  }
+
+  .story-head {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-right: 0 !important;
+  }
+
+  figure.story-cover {
+    width: min(100%, 340px);
+    max-width: 340px;
+  }
+
+  .story-layout {
+    display: block !important;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  figure.story-cover {
+    width: min(100%, 340px);
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 900px) {
+  .story-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem;
+  }
+
+  .story-toc {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    float: none !important;
+    order: -1;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 1rem !important;
+    align-self: stretch;
+  }
+
+  .story-toc,
+  .story-toc * {
+    font-family: var(--f-ui) !important;
+  }
+
+  .story-toc-toggle {
+    width: 100%;
+    font: inherit;
+    color: var(--text);
+  }
+
+  .story-article {
+    order: 1;
+    width: 100%;
+    min-width: 0;
   }
 }
