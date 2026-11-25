@@ -1,7 +1,3 @@
-/* =========================================================
-   Hi-Story, pembaca cerita: daftar bab & lompat bab
-   Bab diambil otomatis dari judul (H2) di isi cerita.
-   ========================================================= */
 (() => {
   "use strict";
 
@@ -19,13 +15,11 @@
     return h ? h.offsetHeight : 68;
   };
 
-  // "#" sendirian di satu baris (sisa mode slide) jadi garis pemisah biasa
   box.querySelectorAll("p").forEach((p) => {
     if (p.textContent.trim() === "#")
       p.replaceWith(document.createElement("hr"));
   });
 
-  /* ---------- 1. Kumpulkan bab dari judul ---------- */
   function pickHeadings() {
     for (const tag of ["h2", "h1", "h3"]) {
       const list = Array.from(box.querySelectorAll(tag)).filter((h) =>
@@ -52,7 +46,6 @@
     return false;
   }
 
-  // Judul yang sudah bernomor ("Bab 2: ...", "3. ...") tidak diberi label ganda
   const NUMBERED =
     /^(?:bab|chapter|bagian|part)\s*\d+\b\s*[:.\-\u2013\u2014)]*\s*/i;
   const NUMLEAD = /^\d+\s*[.):\-\u2013\u2014]\s*/;
@@ -76,7 +69,6 @@
 
   const last = entries.length - 1;
 
-  /* ---------- 2. Daftar bab (dipakai di dua tempat) ---------- */
   function buildList() {
     const ol = document.createElement("ol");
     ol.className = "chapter-list";
@@ -101,7 +93,6 @@
     return ol;
   }
 
-  /* Daftar Bab di atas cerita */
   const toc = document.createElement("details");
   toc.className = "toc";
   if (window.matchMedia("(min-width: 700px)").matches) toc.open = true;
@@ -144,16 +135,13 @@
   const titleEl = bar.querySelector(".cb-title");
   const fillEl = bar.querySelector(".cb-progress span");
 
-  /* ---------- 3. Lompat ---------- */
   function goTo(i) {
     const e = entries[Math.max(0, Math.min(last, i))];
     e.el.scrollIntoView({ behavior, block: "start" });
     if (!e.intro) {
       try {
         history.replaceState(null, "", "#" + e.id);
-      } catch (err) {
-        /* abaikan */
-      }
+      } catch (err) {}
     }
   }
 
@@ -188,7 +176,6 @@
     }
   });
 
-  /* ---------- 4. Bab yang sedang dibaca ---------- */
   let cur = -1;
 
   function render() {
@@ -238,7 +225,6 @@
   );
   window.addEventListener("resize", update);
 
-  // Buka langsung di bab tertentu lewat alamat (#bab-3)
   if (location.hash.indexOf("#bab-") === 0) {
     const target = document.getElementById(location.hash.slice(1));
     if (target)
