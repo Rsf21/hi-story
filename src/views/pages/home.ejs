@@ -1,8 +1,9 @@
-
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
 <main>
+  <canvas id="home-globe-bg" aria-hidden="true"></canvas>
+
   <div class="section-head">
     <div>
       <p class="eyebrow">Arsip Pengetahuan</p>
@@ -228,5 +229,42 @@
 </main>
 
 <script src="/js/home.js" defer></script>
+<!-- <script type="module">
+  import createGlobe from 'https://cdn.skypack.dev/cobe';
+
+  const canvas = document.getElementById('home-globe-bg');
+  if (canvas) {
+    let phi = 0;
+    const isDark = () => document.documentElement.dataset.theme === 'dark';
+
+    createGlobe(canvas, {
+      devicePixelRatio: 2,
+      width: 1240,
+      height: 1240,
+      phi: 0,
+      theta: 0.25,
+      dark: isDark() ? 1 : 0,
+      diffuse: 1.2,
+      mapSamples: 14000,
+      mapBrightness: 6,
+      baseColor: [0.92, 0.90, 0.85],
+      markerColor: [0.66, 0.51, 0.25],
+      glowColor: [0.97, 0.96, 0.95],
+      markers: [
+        { location: [-6.2, 106.8], size: 0.05 },
+        { location: [41.9, 12.5], size: 0.05 },
+        { location: [33.5, 36.3], size: 0.05 },
+        { location: [34.3, 108.9], size: 0.05 },
+      ],
+      onRender: (state) => {
+        state.phi = phi;
+        phi += 0.0025;
+        state.dark = isDark() ? 1 : 0;
+        state.baseColor = isDark() ? [0.15, 0.18, 0.22] : [0.92, 0.90, 0.85];
+        state.glowColor = isDark() ? [0.06, 0.08, 0.10] : [0.97, 0.96, 0.95];
+      },
+    });
+  }
+</script> -->
 
 <%- include('../partials/footer') %>
