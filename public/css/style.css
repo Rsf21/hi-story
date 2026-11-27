@@ -5430,7 +5430,6 @@ body::before {
   }
 }
 
-/* ===== Perbaikan Chapter List di mode gelap ===== */
 @media (max-width: 900px) {
   #story-toc:not(.collapsed) {
     background: var(--surface) !important;
@@ -5468,4 +5467,30 @@ body::before {
 .story-toc {
   background: var(--surface);
   color: var(--text);
+}
+@media (min-width: 901px) {
+  /* sembunyikan hanya daftar bab samping */
+  .story-toc,
+  #story-toc {
+    display: none !important;
+  }
+
+  /* isi cerita satu kolom di tengah */
+  .story-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* judul, tanggal, dan foto sejajar isi cerita, di tengah */
+  .story-head {
+    width: min(var(--measure), 100%) !important;
+    margin-inline: auto !important;
+    align-items: center !important;
+    text-align: center;
+  }
+  .story-meta {
+    justify-content: center;
+  }
+  figure.story-cover {
+    margin-inline: auto;
+  }
 }
